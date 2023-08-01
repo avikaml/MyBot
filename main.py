@@ -1,24 +1,41 @@
-# This is a sample Python script.
+import discord
+from discord.ext import commands
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+# Put bot token in apikeys later and import from there as well as other api keys for the future
+from apikeys import *
+
+# Set the command prefix for your bot (e.g., '!bot_command')
+bot_prefix = "!"
+
+# Create the bot instance with the specified prefix
+client = commands.Bot(command_prefix=bot_prefix, intents=discord.Intents.all())
+    
+# Event: Bot is ready
+@client.event
+# When the bot is ready to execute commands it will execute this function
+async def on_ready():
+    print("Bot is ready.")
+    print(f'Logged in as {client.user.name}')
+    print(f'Bot ID: {client.user.id}')
+    print('------')
+
+# Event: Respond to a command
+# ctx : taking the inputs from discord
+@client.command()
+async def hello(ctx):
+    await ctx.send("Hello! This is MyBot (Temporary Name).")
+
+@client.event
+async def on_member_join(member):
+    channel = client.get_channel(1136000176016871596)
+    await channel.send(f'{member} has joined the server! gayyyyyyyy')
+
+@client.event
+async def on_member_remove(member):
+    channel = client.get_channel(1136000176016871596)
+    await channel.send(f'{member} has left the server! gayyyyyyyy')
 
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+# Run the bot with the specified token
+client.run(BOT_TOKEN)
 
-
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
-
-# TEsting
-
-# Testing 2
-
-print("Hello World")
-
-print("Hello World 2")

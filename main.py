@@ -20,7 +20,8 @@ async def on_ready():
     print('------')
 
 # Event: Respond to a command
-# ctx : taking the inputs from discord
+# ctx : Taking the inputs from discord
+
 @client.command()
 async def hello(ctx):
     await ctx.send("Hello! This is MyBot (Temporary Name).")
@@ -34,6 +35,11 @@ async def on_member_join(member):
 async def on_member_remove(member):
     channel = client.get_channel(1136000176016871596)
     await channel.send(f'{member} has left the server! gayyyyyyyy')
+
+# For learning purposes - send sends a message to the channel the command was made in
+@client.command() # Necessary for the bot to recognize this as a command
+async def ping(ctx):
+    await ctx.send("Pong!")
 
 
 # Run the bot with the specified token

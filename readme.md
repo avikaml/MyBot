@@ -14,4 +14,5 @@ Planned Features:
 5. Starboard integration
 6. Tests - if even possible
 7. Get avatar of user by !avatar @username
+8. !weather
 

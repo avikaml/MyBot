@@ -5,7 +5,8 @@ Atm - bot command prefix is '!'
 Current Features: 
 1. Hello/Goodbye message when a user Joins/Leaves 
 2. !hello message which triggers a greeting from the bot 
-3. Basic embed
+3. Basic embed 
+4. Moderation features - clear messages, kick, ban, unban
 
 
 Planned Features:
@@ -20,3 +21,4 @@ Planned Features:
 9. !help command in its own cog?
 10. level system
 11. Error handling
+12. Birthday Messages

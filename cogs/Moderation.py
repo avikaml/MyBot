@@ -34,7 +34,7 @@ class Moderation(commands.Cog):
     @commands.command()
     @commands.has_permissions(ban_members=True)
     async def ban(self, ctx, member: discord.Member,  *, modreason):
-        await ctx.guild.ban(member)
+        await ctx.guild.ban(member, reason=modreason, delete_message_days=0) # Havent tested
 
         conf_embed = discord.Embed(title="Success!", color = discord.Color.green())
         conf_embed.add_field(name="Member banned:", value=f"{member.mention} has been banned by {ctx.author.mention}", inline = False)

@@ -15,11 +15,16 @@ Figure out Logger later - Logger setup
 handler = logging.FileHandler(filename='discord.log', encoding='utf-8', mode='w') -
 '''
 
+def get_server_prefix(client, message):
+    with open('prefixes.json', 'r') as f:
+        prefixes = json.load(f)
+    return prefixes[str(message.guild.id)]
+
 # Set the command prefix for your bot (e.g., '!bot_command')
-bot_prefix = "!"
+#bot_prefix = "!"
 
 # Create the bot instance with the specified prefix
-client = commands.Bot(command_prefix=bot_prefix, intents=discord.Intents.all())
+client = commands.Bot(command_prefix=get_server_prefix, intents=discord.Intents.all())
     
 # Event: Bot is ready
 @client.event
@@ -29,6 +34,37 @@ async def on_ready():
     print(f'Logged in as {client.user.name}')
     print(f'Bot ID: {client.user.id}')
     print('------')
+
+@client.event
+async def on_guild_join(guild):
+    with open('prefixes.json', "r") as f:
+        prefixes = json.load(f)
+
+    prefixes[str(guild.id)] = "!"
+
+    with open("prefixes.json", "w") as f:
+        json.dump(prefixes, f, indent=4)
+
+@client.event
+async def on_guild_remove(guild):
+    with open("prefixes.json", "r") as f:
+        prefixes = json.load(f)
+
+    prefixes.pop(str(guild.id))
+
+    with open("prefixes.json", "w") as f:
+        json.dump(prefixes, f, indent=4)
+
+@client.command()
+async def setprefix(ctx, *, newprefix: str):
+    with open("prefixes.json", "r") as f:
+        prefixes = json.load(f)
+
+    prefixes[str(ctx.guild.id)] = newprefix
+
+    with open("prefixes.json", "w") as f:
+        json.dump(prefixes, f, indent=4)
+
 
 # This is a normal function, not a discord event
 async def load():

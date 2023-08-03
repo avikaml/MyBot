@@ -7,18 +7,21 @@ Current Features:
 2. !hello message which triggers a greeting from the bot 
 3. Basic embed 
 4. Moderation features - clear messages, kick, ban, unban
+5. Customizable prefixe with !setprefix command - Hasn't  been tested yet
+-- Starting here, each(significant) feature will be worked on in a separate branch --
 
 
 Planned Features:
-1. Embeds for gifs and more
-2. Block certain words - a la deleted the forbidden message and post a warning to that user 
+1. Embeds for gifs, twitter, etc
+2. Block certain words - a la delete the forbidden message and post a warning to that user 
 3. LastFM integration
 4. Spotify integration? 
 5. Starboard integration
 6. Tests
-7. Get avatar of user by !avatar @username
+7. !avatar @username command
 8. !weather command in its own cog?
 9. !help command in its own cog?
 10. level system
 11. Error handling
 12. Birthday Messages
+13. Slash commands

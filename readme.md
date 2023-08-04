@@ -9,6 +9,7 @@ Current Features:
 4. Moderation features - clear messages, kick, ban, unban
 5. Customizable prefixe with !setprefix command - Hasn't  been tested yet
 -- Starting here, each(significant) feature will be worked on in a separate branch --
+6. Logging
 
 
 Planned Features:

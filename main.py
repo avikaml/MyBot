@@ -37,6 +37,7 @@ async def on_ready():
 
 @client.event
 async def on_guild_join(guild):
+    # Add the guild to the prefixes.json file
     with open('prefixes.json', "r") as f:
         prefixes = json.load(f)
 
@@ -45,8 +46,18 @@ async def on_guild_join(guild):
     with open("prefixes.json", "w") as f:
         json.dump(prefixes, f, indent=4)
 
+    # Add the guild to the mutes.json file
+    with open('cogs/jsonfiles/mutes.json', "r") as f:
+        mute_role = json.load(f)
+        mute_role[str(guild.id)] = None
+    
+    with open("cogs/jsonfiles/mutes.json", "w") as f:
+        json.dump(mute_role, f, indent=4)
+    
+
 @client.event
 async def on_guild_remove(guild):
+    # Remove the guild from the prefixes.json file
     with open("prefixes.json", "r") as f:
         prefixes = json.load(f)
 
@@ -54,6 +65,14 @@ async def on_guild_remove(guild):
 
     with open("prefixes.json", "w") as f:
         json.dump(prefixes, f, indent=4)
+
+    # Remove the guild from the mutes.json file
+    with open('cogs/jsonfiles/mutes.json', "r") as f:
+        mute_role = json.load(f)
+        mute_role.pop(str(guild.id))
+    
+    with open("cogs/jsonfiles/mutes.json", "w") as f:
+        json.dump(mute_role, f, indent=4)
 
 @client.command()
 async def setprefix(ctx, *, newprefix: str):

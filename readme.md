@@ -1,6 +1,6 @@
-This is a bot that I made for fun that works on discord servers!
+This is a bot that I'm making for fun that works on discord servers!
 
-Atm - bot command prefix is '!'
+At the moment, the deafult bot command prefix is '!'
 
 Current Features: 
 1. Hello/Goodbye message when a user Joins/Leaves 

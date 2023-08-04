@@ -4,11 +4,12 @@ from itertools import cycle
 import os
 import asyncio
 import json
+import settings
 
 import logging
 
 # Put bot token in apikeys later and import from there as well as other api keys for the future
-from apikeys import *
+#from apikeys import *
 
 '''
 Figure out Logger later - Logger setup
@@ -95,7 +96,7 @@ async def load():
 async def main():
     async with client:
         await load()
-        await client.start(BOT_TOKEN)
+        await client.start(settings.BOT_TOKEN)
 
 # Event: Respond to a command
 # ctx : Taking the inputs from discord

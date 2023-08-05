@@ -11,6 +11,7 @@ Current Features:
 5. Customizable prefixe with !setprefix command - Hasn't  been tested yet
 -- Starting here, each(significant) feature will be worked on in a separate branch --
 6. Logging
+7. !weather {cityname} command that fetches the current weather for a specified city using the OpenWeatherMap API
 
 
 Planned Features:
@@ -21,8 +22,9 @@ Planned Features:
 5. Starboard integration
 6. Tests
 7. !avatar @username command
-8. !weather command in its own cog?
-9. level system
-10. Error handling
-11. Birthday Messages
-12. Slash commands
+8. level system
+9. Error handling ? 
+10. Birthday Messages
+11. Slash commands
+
+Next features to work on: 7, 8, 1, 2 (Not necessarily in that order)

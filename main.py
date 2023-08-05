@@ -109,17 +109,3 @@ async def on_member_remove(member):
     await channel.send(f'{member} has left the server! gayyyyyyyy')
 
 asyncio.run(main())
-
-
-''' NO LONGER RELEVANT BUT I DONT WANNA DELETE BECASUE IDK LOL: '''
-
-# For learning purposes - "send" sends a message to the channel the command was made in
-''''@client.command(aliases=["Ping","PING","pING"]) # Necessary for the bot to recognize this as a command
-async def ping(ctx):
-    bot_latency = round(client.latency * 1000)
-    await ctx.send(f"Pong! {bot_latency} ms.")
-'''
-
-# Run the bot with the specified token
-#client.run(BOT_TOKEN)
-

@@ -1,6 +1,7 @@
 This is a bot that I'm making for fun that works on discord servers!
 
 At the moment, the deafult bot command prefix is '!'
+Please make sure the bot is online before adding it your server.
 
 Current Features: 
 1. Hello/Goodbye message when a user Joins/Leaves 
@@ -21,8 +22,7 @@ Planned Features:
 6. Tests
 7. !avatar @username command
 8. !weather command in its own cog?
-9. !help command in its own cog?
-10. level system
-11. Error handling
-12. Birthday Messages
-13. Slash commands
+9. level system
+10. Error handling
+11. Birthday Messages
+12. Slash commands

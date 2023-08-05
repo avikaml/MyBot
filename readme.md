@@ -12,6 +12,7 @@ Current Features:
 -- Starting here, each(significant) feature will be worked on in a separate branch --
 6. Logging
 7. !weather {cityname} command that fetches the current weather for a specified city using the OpenWeatherMap API
+8. !avatar @username command that displays the avatar of the specified user
 
 
 Planned Features:
@@ -21,10 +22,13 @@ Planned Features:
 4. Spotify integration? 
 5. Starboard integration
 6. Tests
-7. !avatar @username command
+7. Lots of fun commands that display certain pictures/gifs and more
 8. level system
 9. Error handling ? 
 10. Birthday Messages
 11. Slash commands
 
 Next features to work on: 7, 8, 1, 2 (Not necessarily in that order)
+
+Additional notes for myself:
+- Figure out debugging in VS Code - watch video

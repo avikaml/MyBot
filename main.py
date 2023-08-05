@@ -92,7 +92,7 @@ async def main():
         await client.start(settings.BOT_TOKEN, )
 
 # Event: Respond to a command
-# ctx : Taking the inputs from discord
+# ctx : Taking the inputs from discord(ctx = context)
 
 @client.command()
 async def hello(ctx):

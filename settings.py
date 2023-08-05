@@ -10,6 +10,7 @@ twitter_api_key = os.getenv("twitter_api_key")
 twitter_api_secret = os.getenv("twitter_api_secret")
 twitter_access_token = os.getenv("twitter_access_token")
 twitter_access_token_secret = os.getenv("twitter_access_token_secret")
+weather_api_key = os.getenv("weather_api_key")
 
 LOGGING_CONFIG = {
     "version": 1,

@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands
 
 '''
-Basic embed cog - This is a template for future embeds(?)
+Basic embed cog - This is a template for future embeds
 '''
 
 class MyCog(commands.Cog):

@@ -32,3 +32,5 @@ Next features to work on: 7, 8, 1, 2 (Not necessarily in that order)
 
 Additional notes for myself:
 - Figure out debugging in VS Code - watch video
+
+\\ NOTE TO SELF: Before making the repo public, must delete the history of main.py and apikeys.py. Good practice for github ^-^

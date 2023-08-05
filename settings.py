@@ -6,6 +6,10 @@ from logging.config import dictConfig
 load_dotenv()
 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
+twitter_api_key = os.getenv("twitter_api_key")
+twitter_api_secret = os.getenv("twitter_api_secret")
+twitter_access_token = os.getenv("twitter_access_token")
+twitter_access_token_secret = os.getenv("twitter_access_token_secret")
 
 LOGGING_CONFIG = {
     "version": 1,

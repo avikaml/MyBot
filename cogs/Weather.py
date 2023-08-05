@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 import requests
 import datetime
+import pytz
 
 # API Key:
 # 89f8d62346f0eee5b7e94ad7363dc88b
@@ -19,23 +20,27 @@ class Weather(commands.Cog):
 
     @commands.command(alias=["Weather","WEATHER","wEATHER"])
     async def weather(self, ctx, *, city_name):
+        city_name = city_name.title()
+
+        # Make an HTTP GET request using the requests library(The response is a json)
         try:
             url = f'http://api.openweathermap.org/data/2.5/weather?q={city_name}&appid={self.api_key}'
             response = requests.get(url)
             data = response.json()
 
             if data['cod'] == 200:
-                # Make an HTTP GET request using the requests library(The response is a json)
+                # Get the weather info from the json response
                 weather_info = data['weather'][0]['description']
                 temperature_kelvin = data['main']['temp']
                 temperature_celsius = temperature_kelvin - 273.15
                 humidity = data['main']['humidity']
                 wind_speed = data['wind']['speed']
-                # Convert sunrise and sunset timestamps to human-readable times
+
+                # Convert sunrise and sunset timestamps to the local time of the city
                 sunrise_timestamp = data['sys']['sunrise']
                 sunset_timestamp = data['sys']['sunset']
-                sunrise_time = datetime.datetime.fromtimestamp(sunrise_timestamp).strftime('%H:%M:%S')
-                sunset_time = datetime.datetime.fromtimestamp(sunset_timestamp).strftime('%H:%M:%S')
+                sunrise_time = datetime.datetime.fromtimestamp(sunrise_timestamp, pytz.timezone(pytz.country_timezones(data['sys']['country'])[0])).strftime('%H:%M:%S')
+                sunset_time = datetime.datetime.fromtimestamp(sunset_timestamp, pytz.timezone(pytz.country_timezones(data['sys']['country'])[0])).strftime('%H:%M:%S')
 
 
                 # Create an embed

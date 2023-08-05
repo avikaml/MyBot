@@ -11,7 +11,7 @@ class Ping(commands.Cog):
 
     # Commands are different in cogs than in main.py
     @commands.command(aliases=["Ping","PING","pING"])
-    # Most put in self as the first parameter, but ctx is the first parameter
+    # Must put in self as the first parameter, but ctx is the first parameter
     async def ping(self, ctx): 
         bot_latency = round(self.client.latency * 1000) # In classes we have to use self.client instead of client
         await ctx.send(f"Pong! {bot_latency} ms.")

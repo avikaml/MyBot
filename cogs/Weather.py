@@ -4,12 +4,11 @@ import requests
 import datetime
 import pytz
 
-# API Key:
+# Weather API Key:
 # 89f8d62346f0eee5b7e94ad7363dc88b
 # Might wanna add to .env or something to hide it!! or thorugh settings.py
 
 class Weather(commands.Cog):
-
     def __init__(self, client, api_key):
         self.client = client
         self.api_key = api_key
@@ -42,7 +41,6 @@ class Weather(commands.Cog):
                 sunrise_time = datetime.datetime.fromtimestamp(sunrise_timestamp, pytz.timezone(pytz.country_timezones(data['sys']['country'])[0])).strftime('%H:%M:%S')
                 sunset_time = datetime.datetime.fromtimestamp(sunset_timestamp, pytz.timezone(pytz.country_timezones(data['sys']['country'])[0])).strftime('%H:%M:%S')
 
-
                 # Create an embed
                 embed = discord.Embed(title=f"Weather in {city_name}", color=discord.Color.blue())
                 embed.add_field(name=":partly_sunny: Description", value=weather_info, inline=False)
@@ -52,7 +50,6 @@ class Weather(commands.Cog):
                 embed.add_field(name=":sunrise_over_mountains: Sunrise", value=sunrise_time, inline=False)
                 embed.add_field(name=":city_sunset: Sunset", value=sunset_time, inline=False)
                 embed.set_footer(text="Weather data from OpenWeatherMap")
-
 
                 await ctx.send(embed=embed)
             else:

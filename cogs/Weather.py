@@ -3,10 +3,7 @@ from discord.ext import commands
 import requests
 import datetime
 import pytz
-
-# Weather API Key:
-# 89f8d62346f0eee5b7e94ad7363dc88b
-# Might wanna add to .env or something to hide it!! or thorugh settings.py
+from settings import weather_api_key
 
 class Weather(commands.Cog):
     def __init__(self, client, api_key):
@@ -60,5 +57,4 @@ class Weather(commands.Cog):
     
 
 async def setup(client):
-    api_key = '89f8d62346f0eee5b7e94ad7363dc88b'
-    await client.add_cog(Weather(client, api_key))
+    await client.add_cog(Weather(client, weather_api_key))

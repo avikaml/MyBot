@@ -14,7 +14,7 @@ Current Features:
 7. !weather {cityname} command that fetches the current weather for a specified city using the OpenWeatherMap API
 8. !avatar @username command that displays the avatar of the specified user
 9. SQL database to store information
-10. !tweet command that embeds tweets, is currently broken due to twitter shenanigans :)
+10. !tweet command that embeds tweets, is currently broken due to twitter shenanigans, instead !vx exists
 
 
 Planned Features:

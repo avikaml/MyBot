@@ -37,4 +37,5 @@ Next features to work on: 7, 8, 1, 2 (Not necessarily in that order)
 Additional notes for myself:
 - Figure out debugging in VS Code - watch video
 
-\\ NOTE TO SELF: Before making the repo public, must delete the history of main.py and apikeys.py, possible Twitter.py(that I deleted and will reinstate, not sure if I actually did commit it) and Weather.py . Good practice for github ^-^
+\\ NOTE TO SELF: Before making the repo public, must delete the history of main.py and apikeys.py, possibly Twitter.py(that I deleted and will reinstate, not sure if I actually did commit it) and Weather.py . Good practice for github ^-^
+\\ \\ UPDATE: I could possibly just reset the bot token, twitter tokens  and weather token and that will be enough instead of going through github deletion.

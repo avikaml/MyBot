@@ -26,7 +26,7 @@ Planned Features:
 6. Tests
 7. Lots of fun commands that display certain pictures/gifs and more
 8. level system
-9. Error handling ? 
+9. Error handling/Custom error messages?
 10. Birthday Messages
 11. Slash commands
 12. !userinfo command

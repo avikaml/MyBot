@@ -5,6 +5,8 @@ import datetime
 import pytz
 from settings import weather_api_key
 
+''' This had sensitive info '''
+
 class Weather(commands.Cog):
     def __init__(self, client, api_key):
         self.client = client
@@ -16,10 +18,10 @@ class Weather(commands.Cog):
 
     @commands.command(alias=["Weather","WEATHER","wEATHER"])
     async def weather(self, ctx, *, city_name):
-        city_name = city_name.title()
 
         # Make an HTTP GET request using the requests library(The response is a json)
         try:
+            city_name = city_name.title()
             url = f'http://api.openweathermap.org/data/2.5/weather?q={city_name}&appid={self.api_key}'
             response = requests.get(url)
             data = response.json()

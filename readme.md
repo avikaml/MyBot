@@ -13,6 +13,7 @@ Current Features:
 6. Logging
 7. !weather {cityname} command that fetches the current weather for a specified city using the OpenWeatherMap API
 8. !avatar @username command that displays the avatar of the specified user
+9. SQL database to store information
 
 
 Planned Features:
@@ -27,6 +28,8 @@ Planned Features:
 9. Error handling ? 
 10. Birthday Messages
 11. Slash commands
+12. !userinfo command
+13. add logger to all the cogs so they log
 
 Next features to work on: 7, 8, 1, 2 (Not necessarily in that order)
 

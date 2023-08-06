@@ -14,10 +14,11 @@ Current Features:
 7. !weather {cityname} command that fetches the current weather for a specified city using the OpenWeatherMap API
 8. !avatar @username command that displays the avatar of the specified user
 9. SQL database to store information
+10. !tweet command that embeds tweets, is currently broken due to twitter shenanigans :)
 
 
 Planned Features:
-1. Embeds for gifs, twitter, etc
+1. Embeds for gifs, etc
 2. Block certain words - a la delete the forbidden message and post a warning to that user 
 3. LastFM integration
 4. Spotify integration? 
@@ -36,4 +37,4 @@ Next features to work on: 7, 8, 1, 2 (Not necessarily in that order)
 Additional notes for myself:
 - Figure out debugging in VS Code - watch video
 
-\\ NOTE TO SELF: Before making the repo public, must delete the history of main.py and apikeys.py. Good practice for github ^-^
+\\ NOTE TO SELF: Before making the repo public, must delete the history of main.py and apikeys.py, possible Twitter.py(that I deleted and will reinstate, not sure if I actually did commit it) and Weather.py . Good practice for github ^-^

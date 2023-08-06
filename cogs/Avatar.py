@@ -1,5 +1,8 @@
 import discord
 from discord.ext import commands
+import settings
+
+logger = settings.logging.getLogger("bot")
 
 class Avatar(commands.Cog):
     def __init__(self, client):

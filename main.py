@@ -6,10 +6,11 @@ import asyncio
 import json
 import settings
 import logging
+import SingletonLogger
 
-# Put bot token in apikeys later and import from there as well as other api keys for the future
+#logger = settings.logging.getLogger("bot")
 
-logger = settings.logging.getLogger("bot")
+logger = SingletonLogger.SingletonLogger.get_logger()
 
 def get_server_prefix(client, message):
     with open('prefixes.json', 'r') as f:
@@ -24,10 +25,6 @@ client = commands.Bot(command_prefix=get_server_prefix, intents=discord.Intents.
 # When the bot is ready to execute commands it will execute this function
 async def on_ready():
     logger.info(f"User: {client.user} (ID: {client.user.id})")
-    '''print("Bot is ready.")
-    print(f'Logged in as {client.user.name}')
-    print(f'Bot ID: {client.user.id}')
-    print('------')'''
 
 @client.event
 async def on_guild_join(guild):
@@ -78,19 +75,6 @@ async def setprefix(ctx, *, newprefix: str):
     with open("prefixes.json", "w") as f:
         json.dump(prefixes, f, indent=4)
 
-
-# This is a normal function, not a discord event
-async def load():
-    for filename in os.listdir("./cogs"):
-        if filename.endswith(".py"):
-            await client.load_extension(f"cogs.{filename[:-3]}")
-            #print(f"Loaded {filename[:-3]}")
-
-async def main():
-    async with client:
-        await load()
-        await client.start(settings.BOT_TOKEN, )
-
 # Event: Respond to a command
 # ctx : Taking the inputs from discord(ctx = context)
 
@@ -107,5 +91,16 @@ async def on_member_join(member):
 async def on_member_remove(member):
     channel = client.get_channel(1136000176016871596)
     await channel.send(f'{member} has left the server! gayyyyyyyy')
+
+# This is a normal function, not a discord event
+async def load():
+    for filename in os.listdir("./cogs"):
+        if filename.endswith(".py"):
+            await client.load_extension(f"cogs.{filename[:-3]}")
+        
+async def main():
+    async with client:
+        await load()
+        await client.start(settings.BOT_TOKEN, )
 
 asyncio.run(main())

@@ -3,9 +3,13 @@ from discord.ext import commands
 import requests
 import datetime
 import pytz
+import settings
+import SingletonLogger
 from settings import weather_api_key
 
-''' This had sensitive info '''
+''' This had sensitive info - weather api key '''
+
+logger = SingletonLogger.SingletonLogger.get_logger()
 
 class Weather(commands.Cog):
     def __init__(self, client, api_key):
@@ -17,8 +21,13 @@ class Weather(commands.Cog):
         print('Weather.py is ready')
 
     @commands.command(alias=["Weather","WEATHER","wEATHER"])
-    async def weather(self, ctx, *, city_name):
+    async def weather(self, ctx, *, city_name=None):
+        if city_name is None:
+            await ctx.send("Please specify a city name")
+            logger.warning(f"User: {ctx.author} (ID: {ctx.author.id}) did not specify a city name in {ctx.guild.name} (ID: {ctx.guild.id})")
+            return
 
+        logger.info(f"User: {ctx.author} (ID: {ctx.author.id}) used the weather command in {ctx.guild.name} (ID: {ctx.guild.id})")
         # Make an HTTP GET request using the requests library(The response is a json)
         try:
             city_name = city_name.title()
@@ -55,8 +64,8 @@ class Weather(commands.Cog):
                 await ctx.send(f"Error: Unable to fetch weather data for {city_name}.")
 
         except Exception as e:
-            await ctx.send(f"An error occurred: {e}")
-    
+            await ctx.send(f"An error occurred: {e}")    
+            logger.info(f"An error occurred: {e}")
 
 async def setup(client):
     await client.add_cog(Weather(client, weather_api_key))

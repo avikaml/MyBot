@@ -9,7 +9,7 @@ from settings import weather_api_key
 
 ''' This had sensitive info - weather api key '''
 
-logger = SingletonLogger.SingletonLogger.get_logger()
+logger = SingletonLogger.get_logger()
 
 class Weather(commands.Cog):
     def __init__(self, client, api_key):

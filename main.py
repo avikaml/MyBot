@@ -10,7 +10,7 @@ import SingletonLogger
 
 #logger = settings.logging.getLogger("bot")
 
-logger = SingletonLogger.SingletonLogger.get_logger()
+logger = SingletonLogger.get_logger()
 
 def get_server_prefix(client, message):
     with open('prefixes.json', 'r') as f:

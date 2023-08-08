@@ -1,9 +1,10 @@
 import settings
-import logging
+import logging 
 
-class SingletonLogger():    
-    @classmethod
-    def get_logger(cls):
-        if cls._instance is None:
-            cls._instance = settings.logging.getLogger("bot")
-        return cls._instance
+logger = settings.logging.getLogger("bot")
+
+def get_logger():
+    return logger
+    
+
+    

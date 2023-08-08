@@ -80,6 +80,7 @@ async def setprefix(ctx, *, newprefix: str):
 
 @client.command()
 async def hello(ctx):
+    logger.info ("hello command called")
     await ctx.send("Hello! This is MyBot (Temporary Name).")
 
 @client.event

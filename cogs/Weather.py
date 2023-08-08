@@ -22,6 +22,7 @@ class Weather(commands.Cog):
 
     @commands.command(alias=["Weather","WEATHER","wEATHER"])
     async def weather(self, ctx, *, city_name=None):
+        logger.info("Weather command used")
         if city_name is None:
             await ctx.send("Please specify a city name")
             logger.warning(f"User: {ctx.author} (ID: {ctx.author.id}) did not specify a city name in {ctx.guild.name} (ID: {ctx.guild.id})")
@@ -65,7 +66,7 @@ class Weather(commands.Cog):
 
         except Exception as e:
             await ctx.send(f"An error occurred: {e}")    
-            logger.info(f"An error occurred: {e}")
+            logger.error(f"An error occurred: {e}")
 
 async def setup(client):
     await client.add_cog(Weather(client, weather_api_key))

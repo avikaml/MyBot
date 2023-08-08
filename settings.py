@@ -11,6 +11,9 @@ twitter_api_secret = os.getenv("twitter_secret_api_key")
 twitter_access_token = os.getenv("twitter_access_token")
 twitter_access_token_secret = os.getenv("twitter_secret_access_token")
 weather_api_key = os.getenv("weather_api_key")
+lastfm_api_key = os.getenv("lastfm_api_key")
+lastfm_secret_api_key = os.getenv("lastfm_secret")
+db_name = os.getenv("db_name")
 
 LOGGING_CONFIG = {
     "version": 1,

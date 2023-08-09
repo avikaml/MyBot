@@ -15,7 +15,7 @@ Current Features:
 8. !avatar @username command that displays the avatar of the specified user
 9. SQL database to store information
 10. !tweet command that embeds tweets, is currently broken due to twitter shenanigans, instead !vx exists
-11. lastfm commands, currently there exist: lfset, 
+11. lastfm commands, currently there exist: lfset, lfchange(temporary, should be part of lfset), !lf np command
 
 
 Planned Features:
@@ -37,6 +37,7 @@ Next features to work on: 7, 8, 1, 2 (Not necessarily in that order)
 
 Additional notes for myself:
 - Figure out debugging in VS Code - watch video
+- LastFM commands could do with a redo, only started but still, for example have links attached to keywords(ITZY links to ITZY's lastfm page, etc)
 
 
 \\ NOTE TO SELF: Before making the repo public, must delete the history of main.py and apikeys.py, possibly Twitter.py(that I deleted and will reinstate, not sure if I actually did commit it) and Weather.py . Good practice for github ^-^

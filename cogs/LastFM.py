@@ -102,6 +102,26 @@ class LastFM(commands.Cog):
             await ctx.send(f"Error: {e}")
             logger.error(f"Error: {e}")
 
+    # TBD
+    @commands.Command(alias=['lf recent', 'lf recenttracks', 'lf recent tracks'])
+    async def lfrecent(self, ctx, username=None):
+        logger.info(f"User: {ctx.author} (ID: {ctx.author.id}) used the lf recent command in {ctx.guild.name} (ID: {ctx.guild.id})")
+        if(username is None):
+            if(not await has_lastfm_username(ctx.author.id)):
+                await ctx.send("You don't have a LastFM username set.")
+                return
+        username = await get_lastfm_username(ctx.author.id)
+        try:
+            url = f"http://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user={username}&api_key={self.api_key}&format=json"
+            response = requests.get(url)
+            data = response.json()
+
+            tracks = data['recenttracks']['track']
+
+        except Exception as e:
+            await ctx.send(f"Error: {e}")
+            logger.error(f"Error: {e}")
+
 
 async def get_lastfm_username(discord_id):
     conn = sqlite3.connect('database.db')
@@ -130,6 +150,15 @@ async def has_lastfm_username(discord_id):
     conn.close()
 
     return row is not None and row[0] is not None
+
+async def get_recent_tracks(username): # should maybe use this, if it works, in the !lf command :))
+    url = f"http://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user={username}&api_key={self.api_key}&format=json"
+    response = requests.get(url)
+    data = response.json()
+
+    tracks = data['recenttracks']['track']
+
+    return tracks
 
 async def setup(client):
     await client.add_cog(LastFM(client, settings.lastfm_api_key, settings.lastfm_secret_api_key))

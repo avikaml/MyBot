@@ -19,8 +19,8 @@ class LastFM(commands.Cog):
         print('LastFM.py is ready')
 
     @commands.command()
-    async def setlastfm(self, ctx, username):
-        logger.info(f"User: {ctx.author} (ID: {ctx.author.id}) used the setlastfm command in {ctx.guild.name} (ID: {ctx.guild.id})")
+    async def lfset(self, ctx, username):
+        logger.info(f"User: {ctx.author} (ID: {ctx.author.id}) used the lfset command in {ctx.guild.name} (ID: {ctx.guild.id})")
         with sqlite3.connect(settings.db_name) as conn:
             try:
                 if(has_lastfm_username(ctx.author.id)):
@@ -43,8 +43,27 @@ class LastFM(commands.Cog):
                 await ctx.send(f"Error: {e}")
                 logger.error(f"Error: {e}") 
 
-            """ finally: # THIS MIGHT NEED TO GO! ITS CAUSING PROBLEM
-                conn.close() """
+    @commands.command()
+    async def lfchange(self,ctx, username):
+        logger.info(f"User: {ctx.author} (ID: {ctx.author.id}) used the lfchange command in {ctx.guild.name} (ID: {ctx.guild.id})")
+        with sqlite3.connect(settings.db_name) as conn:
+            try:
+                if(not has_lastfm_username(ctx.author.id)):
+                    await ctx.send("You don't have a LastFM username set.")
+                    return
+                
+                cursor = conn.cursor()
+                query = '''
+                UPDATE users SET lastfm_username = ? WHERE discord_id = ?
+                '''
+                values = (username, ctx.author.id)
+                cursor.execute(query, values)
+                conn.commit()
+                await ctx.send(f"Changed LastFM username to {username}")
+
+            except Exception as e:
+                await ctx.send(f"Error: {e}")
+                logger.error(f"Error: {e}")
 
 
 def has_lastfm_username(discord_id):

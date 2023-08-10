@@ -21,6 +21,7 @@ class LastFM(commands.Cog):
 
     @commands.command(case_insensitive=True)
     async def lfset(self, ctx, username):
+        ''' allows a user to set their lastfm username.'''
         logger.info(f"User: {ctx.author} (ID: {ctx.author.id}) used the lfset command in {ctx.guild.name} (ID: {ctx.guild.id})")
         with sqlite3.connect(settings.db_name) as conn:
             try:
@@ -47,6 +48,7 @@ class LastFM(commands.Cog):
     # This is a temporary solution to changing the LastFM username, it will be part of lfset in the future.
     @commands.command(case_insensitive=True)
     async def lfchange(self,ctx, username):
+        ''' change a users lastfm username.'''
         logger.info(f"User: {ctx.author} (ID: {ctx.author.id}) used the lfchange command in {ctx.guild.name} (ID: {ctx.guild.id})")
         with sqlite3.connect(settings.db_name) as conn:
             try:
@@ -69,7 +71,10 @@ class LastFM(commands.Cog):
 
     @commands.command(case_insensitive=True, alias=['lf np'])
     async def lf(self, ctx, username=None):
-        ''' Returns the currently playing track of the user, or his last played track if he isn't playing anything'''
+        ''' Returns the currently playing track of the user, or his last played track if he isn't playing anything
+            To be added:
+            - HyperLinks on everything like in lf recent
+        '''
         logger.info(f"User: {ctx.author} (ID: {ctx.author.id}) used the lf command in {ctx.guild.name} (ID: {ctx.guild.id})")
         if(username is None):
             if(not await has_lastfm_username(ctx.author.id)):
@@ -90,7 +95,7 @@ class LastFM(commands.Cog):
             album = track['album']['#text']
             image = track['image'][2]['#text']
 
-            embed = discord.Embed(title=f"**{username}** is currently listening to: ", description=f" **{song}** by **{artist}** \n on **{album}**", color=discord.Color.default())
+            embed = discord.Embed(title=f"**{username}** - Now playing: ", description=f" **{song}** by **{artist}** \n on **{album}**", color=discord.Color.default())
             embed.set_author(name="LastFM", icon_url='https://images-ext-2.discordapp.net/external/yXB4N2dn_VX55UFo4EUH-rdq3JZs7Mo04nYbYiHbhF4/https/i.imgur.com/UKJPKD5.png')
             embed.set_thumbnail(url=image)
             embed.add_field(name="Previous track", value=f"{prev_track['name']} by {prev_track['artist']['#text']}", inline=False)
@@ -106,6 +111,13 @@ class LastFM(commands.Cog):
         ''' Returns the recent tracks played by the user
             atm doesn't show time for the first track cause it causes a bug
             can be very easily fixed
+            To be added:
+            - proper timestamp using the actual time lastfm give i guess or the datetime library?
+            - add a reaction to the message to allow the user to go to the next page of track
+            - add a reaction to the message to allow the user to go to the previous page of track
+            - add a reaction to the message to allow the user to go to the first page of track
+            - add a reaction to the message to allow the user to go to the last page of track
+            Reference point : the lfc lf bot, it's very clean
         '''
 
         logger.info(f"User: {ctx.author} (ID: {ctx.author.id}) used the lf recent command in {ctx.guild.name} (ID: {ctx.guild.id})")
@@ -128,7 +140,6 @@ class LastFM(commands.Cog):
             embed.set_thumbnail(url = ctx.author.avatar.url)
             
             for j, track in enumerate(tracks[0:10]):
-                print(track)
                 #print(track)
                 artist_name = track['artist']['#text']
                 # Replace spaces with %20 using urllib.parse.quote

@@ -32,6 +32,7 @@ Planned Features:
 11. Slash commands
 12. !userinfo command
 13. add logger to all the cogs so they log
+14. !tiktok command for tiktok embeds with vx
 
 Next features to work on: 7, 8, 1, 2 (Not necessarily in that order)
 

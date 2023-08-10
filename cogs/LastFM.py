@@ -18,7 +18,7 @@ class LastFM(commands.Cog):
     async def on_ready(self):
         print('LastFM.py is ready')
 
-    @commands.command()
+    @commands.command(case_insensitive=True)
     async def lfset(self, ctx, username):
         logger.info(f"User: {ctx.author} (ID: {ctx.author.id}) used the lfset command in {ctx.guild.name} (ID: {ctx.guild.id})")
         with sqlite3.connect(settings.db_name) as conn:
@@ -44,7 +44,7 @@ class LastFM(commands.Cog):
                 logger.error(f"Error: {e}") 
 
     # This is a temporary solution to changing the LastFM username, it will be part of lfset in the future.
-    @commands.command()
+    @commands.command(case_insensitive=True)
     async def lfchange(self,ctx, username):
         logger.info(f"User: {ctx.author} (ID: {ctx.author.id}) used the lfchange command in {ctx.guild.name} (ID: {ctx.guild.id})")
         with sqlite3.connect(settings.db_name) as conn:
@@ -66,7 +66,7 @@ class LastFM(commands.Cog):
                 await ctx.send(f"Error: {e}")
                 logger.error(f"Error: {e}")
 
-    @commands.command(alias=['lf np'])
+    @commands.command(case_insensitive=True, alias=['lf np'])
     async def lf(self, ctx, username=None):
         logger.info(f"User: {ctx.author} (ID: {ctx.author.id}) used the lf command in {ctx.guild.name} (ID: {ctx.guild.id})")
         if(username is None):

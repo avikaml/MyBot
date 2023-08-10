@@ -15,7 +15,7 @@ Current Features:
 8. !avatar @username command that displays the avatar of the specified user
 9. SQL database to store information
 10. !tweet command that embeds tweets, is currently broken due to twitter shenanigans, instead !vx exists
-11. lastfm commands, currently there exist: lfset, lfchange(temporary, should be part of lfset), !lf np command
+11. lastfm commands, currently there exist: lfset, lfchange(temporary, should be part of lfset), !lf np, !lfrecent
 
 
 Planned Features:

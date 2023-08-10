@@ -5,6 +5,7 @@ import requests
 import sqlite3
 import SingletonLogger
 import settings
+import urllib.parse
 
 logger = SingletonLogger.get_logger()
 
@@ -122,11 +123,13 @@ class LastFM(commands.Cog):
             embed.set_author(name="LastFM", icon_url='https://images-ext-2.discordapp.net/external/yXB4N2dn_VX55UFo4EUH-rdq3JZs7Mo04nYbYiHbhF4/https/i.imgur.com/UKJPKD5.png')
             
             for j, track in enumerate(tracks[:10]):
-                #track_title_and_link = f"[{i+1}. {track['artist']['#text']} - {track['name']}]({track['url']})"
-                #embed.add_field(name="\u200b", value=track_title_and_link, inline=False)
-                #embed.add_field(name=f"{i+1}. {track['artist']['#text']} - {track['name']}({track['url']})", value=f"[{track['album']['#text']}]({track['url']})", inline=False)                
-                # Add track title and the title is also a clickable link that leads to the track's lastfm page, without album info
-                embed.add_field(name=f"", value=f"{j+1}. "+f"[{track['artist']['#text']} - {track['name']}]({track['url']})", inline=False)
+                artist_name = track['artist']['#text']
+                # Replace spaces with %20 using urllib.parse.quote
+                artist_name_encoded = urllib.parse.quote(artist_name)
+                artist_url = f"https://www.last.fm/music/{artist_name_encoded}"
+
+                embed.add_field(name=f"", value=f"{j+1}. "+f"[{track['artist']['#text']}]({artist_url})" +" - " + f"[{track['name']}]({track['url']})", inline=False)
+
             await ctx.send(embed=embed)
 
         except Exception as e:

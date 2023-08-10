@@ -100,10 +100,13 @@ class LastFM(commands.Cog):
             await ctx.send(f"Error: {e}")
             logger.error(f"Error: {e}")
 
-    # TBD
-    @commands.command(alias=['lf recent', 'lf recenttracks', 'lf recent tracks'])
+    # TBC
+    @commands.command(alias=['lf recent', 'lf recenttracks', 'lf recent tracks', 'lfrt'])
     async def lfrecent(self, ctx, username=None):
-        ''' Returns the recent tracks played by the user'''
+        ''' Returns the recent tracks played by the user
+            atm doesn't show time for the first track cause it causes a bug
+            can be very easily fixed
+        '''
 
         logger.info(f"User: {ctx.author} (ID: {ctx.author.id}) used the lf recent command in {ctx.guild.name} (ID: {ctx.guild.id})")
         if(username is None):
@@ -114,21 +117,32 @@ class LastFM(commands.Cog):
         try:
             url = f"http://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user={username}&api_key={self.api_key}&format=json"
             tracks = await get_recent_tracks(url)
-            user_profile_url = f"https://www.last.fm/user/{username}"
+            #print(tracks[:1])
+            # user_profile_url = f"https://www.last.fm/user/{username}"
             embed = discord.Embed(
                 title=f"**{username}'s** recent tracks",
                 url=f"https://www.last.fm/user/{username}",
                 color=discord.Color.default()
             )
             embed.set_author(name="LastFM", icon_url='https://images-ext-2.discordapp.net/external/yXB4N2dn_VX55UFo4EUH-rdq3JZs7Mo04nYbYiHbhF4/https/i.imgur.com/UKJPKD5.png')
+            embed.set_thumbnail(url = ctx.author.avatar.url)
             
-            for j, track in enumerate(tracks[:10]):
+            for j, track in enumerate(tracks[0:10]):
+                print(track)
+                #print(track)
                 artist_name = track['artist']['#text']
                 # Replace spaces with %20 using urllib.parse.quote
                 artist_name_encoded = urllib.parse.quote(artist_name)
                 artist_url = f"https://www.last.fm/music/{artist_name_encoded}"
-
-                embed.add_field(name=f"", value=f"{j+1}. "+f"[{track['artist']['#text']}]({artist_url})" +" - " + f"[{track['name']}]({track['url']})", inline=False)
+                #print(track['date']['#text'])
+                if(j == 0):
+                    embed.add_field(name=f"", value=f"{j+1}. "+f"[{track['artist']['#text']}]({artist_url})" +" - " +
+                                    f"[{track['name']}]({track['url']})" +
+                                    " - " + "now playing...", inline=False)
+                else:
+                    embed.add_field(name=f"", value=f"{j+1}. "+f"[{track['artist']['#text']}]({artist_url})" +" - " +
+                                 f"[{track['name']}]({track['url']})" +
+                                 " - " + f"{track['date']['#text']}", inline=False)
 
             await ctx.send(embed=embed)
 

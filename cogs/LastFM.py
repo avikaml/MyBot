@@ -115,7 +115,8 @@ class LastFM(commands.Cog):
             url = f"http://ws.audioscrobbler.com/2.0/?method=user.getInfo&user={username}&api_key={self.api_key}&format=json"
             playcount = await get_playcount(url)
             embed.set_footer(text=f"Total scrobbles: {playcount}")
-
+            ##
+            
             await ctx.send(embed=embed)
 
         except Exception as e:

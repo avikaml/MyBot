@@ -15,13 +15,13 @@ Current Features:
 8. !avatar @username command that displays the avatar of the specified user
 9. SQL database to store information
 10. !tweet command that embeds tweets, is currently broken due to twitter shenanigans, instead !vx exists
-11. lastfm commands, currently there exist: lfset, lfchange(temporary, should be part of lfset), !lf np command
+11. lastfm commands, currently there exist: lfset, lfchange(temporary, should be part of lfset), !lf np, !lfrecent
 
 
 Planned Features:
 1. Embeds for gifs, etc
 2. Block certain words - a la delete the forbidden message and post a warning to that user 
-3. LastFM integration
+3. LastFM integration - !lfset, !lf np, !lfrecent, !lfchart, !lfartist, !lfalbum, !lftoptracks, !lftopartists, !lftopalbums, !lfartistinfo, !lfalbuminfo, !lftrackinfo, !lfartisttags, !lfalbumtags, !lftracktags, !lfartistbio, !lfalbumbio, !lftrackbio, !lfartistwiki, !lfalbumwiki, !lftrackwiki, !lfartistsearch, !lfalbumsearch, !lftracksearch, !lfartistcorrection, !lfalbumcorrection, !lftrackcorrection, !lfartistaddtags, !lfalbumaddtags, !lftrackaddtags, !lfartistremovetags, !lfalbumremovetags, !lftrackremovetags, !lfartisttags, !lfalbumtags, !lftracktags, !lfartisttopalbums, !lfartisttoptracks, !lfarti
 4. Spotify integration? 
 5. Starboard integration
 6. Tests
@@ -42,4 +42,5 @@ Additional notes for myself:
 
 
 \\ NOTE TO SELF: Before making the repo public, must delete the history of main.py and apikeys.py, possibly Twitter.py(that I deleted and will reinstate, not sure if I actually did commit it) and Weather.py . Good practice for github ^-^
+
 \\ \\ UPDATE: I could possibly just reset the bot token, twitter tokens  and weather token and that will be enough instead of going through github deletion.

@@ -5,6 +5,7 @@ import requests
 import sqlite3
 import SingletonLogger
 import settings
+import urllib.parse
 
 logger = SingletonLogger.get_logger()
 
@@ -20,6 +21,7 @@ class LastFM(commands.Cog):
 
     @commands.command(case_insensitive=True)
     async def lfset(self, ctx, username):
+        ''' allows a user to set their lastfm username.'''
         logger.info(f"User: {ctx.author} (ID: {ctx.author.id}) used the lfset command in {ctx.guild.name} (ID: {ctx.guild.id})")
         with sqlite3.connect(settings.db_name) as conn:
             try:
@@ -46,6 +48,7 @@ class LastFM(commands.Cog):
     # This is a temporary solution to changing the LastFM username, it will be part of lfset in the future.
     @commands.command(case_insensitive=True)
     async def lfchange(self,ctx, username):
+        ''' change a users lastfm username.'''
         logger.info(f"User: {ctx.author} (ID: {ctx.author.id}) used the lfchange command in {ctx.guild.name} (ID: {ctx.guild.id})")
         with sqlite3.connect(settings.db_name) as conn:
             try:
@@ -68,6 +71,10 @@ class LastFM(commands.Cog):
 
     @commands.command(case_insensitive=True, alias=['lf np'])
     async def lf(self, ctx, username=None):
+        ''' Returns the currently playing track of the user, or his last played track if he isn't playing anything
+            To be added:
+            - HyperLinks on everything like in lf recent
+        '''
         logger.info(f"User: {ctx.author} (ID: {ctx.author.id}) used the lf command in {ctx.guild.name} (ID: {ctx.guild.id})")
         if(username is None):
             if(not await has_lastfm_username(ctx.author.id)):
@@ -88,23 +95,31 @@ class LastFM(commands.Cog):
             album = track['album']['#text']
             image = track['image'][2]['#text']
 
-            embed = discord.Embed(title=f"**{username}** is currently listening to: ", description=f" **{song}** by **{artist}** \n on **{album}**", color=discord.Color.default())
+            embed = discord.Embed(title=f"**{username}** - Now playing: ", description=f" **{song}** by **{artist}** \n on **{album}**", color=discord.Color.default())
             embed.set_author(name="LastFM", icon_url='https://images-ext-2.discordapp.net/external/yXB4N2dn_VX55UFo4EUH-rdq3JZs7Mo04nYbYiHbhF4/https/i.imgur.com/UKJPKD5.png')
             embed.set_thumbnail(url=image)
-            #embed.set_image(url='https://images-ext-2.discordapp.net/external/yXB4N2dn_VX55UFo4EUH-rdq3JZs7Mo04nYbYiHbhF4/https/i.imgur.com/UKJPKD5.png')
             embed.add_field(name="Previous track", value=f"{prev_track['name']} by {prev_track['artist']['#text']}", inline=False)
-            #embed.set_footer(text=f"Previous track: {prev_track['name']} by {prev_track['artist']['#text']}")
-
             await ctx.send(embed=embed)
 
-            #await ctx.send(f"**{username}** is currently listening to **{song}** by **{artist}** from the album **{album}**")
         except Exception as e:
             await ctx.send(f"Error: {e}")
             logger.error(f"Error: {e}")
 
-    # TBD
-"""     @commands.Command(alias=['lf recent', 'lf recenttracks', 'lf recent tracks'])
+    # TBC
+    @commands.command(alias=['lf recent', 'lf recenttracks', 'lf recent tracks', 'lfrt'])
     async def lfrecent(self, ctx, username=None):
+        ''' Returns the recent tracks played by the user
+            atm doesn't show time for the first track cause it causes a bug
+            can be very easily fixed
+            To be added:
+            - proper timestamp using the actual time lastfm give i guess or the datetime library?
+            - add a reaction to the message to allow the user to go to the next page of track
+            - add a reaction to the message to allow the user to go to the previous page of track
+            - add a reaction to the message to allow the user to go to the first page of track
+            - add a reaction to the message to allow the user to go to the last page of track
+            Reference point : the lfc lf bot, it's very clean
+        '''
+
         logger.info(f"User: {ctx.author} (ID: {ctx.author.id}) used the lf recent command in {ctx.guild.name} (ID: {ctx.guild.id})")
         if(username is None):
             if(not await has_lastfm_username(ctx.author.id)):
@@ -113,15 +128,38 @@ class LastFM(commands.Cog):
         username = await get_lastfm_username(ctx.author.id)
         try:
             url = f"http://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user={username}&api_key={self.api_key}&format=json"
-            response = requests.get(url)
-            data = response.json()
+            tracks = await get_recent_tracks(url)
+            #print(tracks[:1])
+            # user_profile_url = f"https://www.last.fm/user/{username}"
+            embed = discord.Embed(
+                title=f"**{username}'s** recent tracks",
+                url=f"https://www.last.fm/user/{username}",
+                color=discord.Color.default()
+            )
+            embed.set_author(name="LastFM", icon_url='https://images-ext-2.discordapp.net/external/yXB4N2dn_VX55UFo4EUH-rdq3JZs7Mo04nYbYiHbhF4/https/i.imgur.com/UKJPKD5.png')
+            embed.set_thumbnail(url = ctx.author.avatar.url)
+            
+            for j, track in enumerate(tracks[0:10]):
+                #print(track)
+                artist_name = track['artist']['#text']
+                # Replace spaces with %20 using urllib.parse.quote
+                artist_name_encoded = urllib.parse.quote(artist_name)
+                artist_url = f"https://www.last.fm/music/{artist_name_encoded}"
+                #print(track['date']['#text'])
+                if(j == 0):
+                    embed.add_field(name=f"", value=f"{j+1}. "+f"[{track['artist']['#text']}]({artist_url})" +" - " +
+                                    f"[{track['name']}]({track['url']})" +
+                                    " - " + "now playing...", inline=False)
+                else:
+                    embed.add_field(name=f"", value=f"{j+1}. "+f"[{track['artist']['#text']}]({artist_url})" +" - " +
+                                 f"[{track['name']}]({track['url']})" +
+                                 " - " + f"{track['date']['#text']}", inline=False)
 
-            tracks = data['recenttracks']['track']
+            await ctx.send(embed=embed)
 
         except Exception as e:
             await ctx.send(f"Error: {e}")
             logger.error(f"Error: {e}")
- """
 
 async def get_lastfm_username(discord_id):
     conn = sqlite3.connect('database.db')
@@ -151,14 +189,13 @@ async def has_lastfm_username(discord_id):
 
     return row is not None and row[0] is not None
 
-""" async def get_recent_tracks(username): # should maybe use this, if it works, in the !lf command :))
-    url = f"http://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user={username}&api_key={self.api_key}&format=json"
+async def get_recent_tracks(url): # should maybe use this, if it works, in the !lf command :))
     response = requests.get(url)
     data = response.json()
 
     tracks = data['recenttracks']['track']
 
     return tracks
- """
+
 async def setup(client):
     await client.add_cog(LastFM(client, settings.lastfm_api_key, settings.lastfm_secret_api_key))

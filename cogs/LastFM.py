@@ -6,6 +6,7 @@ import sqlite3
 import SingletonLogger
 import settings
 import urllib.parse
+import datetime
 
 logger = SingletonLogger.get_logger()
 
@@ -89,9 +90,7 @@ class LastFM(commands.Cog):
             tracks = data['recenttracks']['track']
             track = tracks[0]
             track_name = track['name']
-            #print(track)
             prev_track = tracks[1]
-            #print(prev_track)
             artist_name = track['artist']['#text']
             song = track['name']
             album_name = track['album']['#text']
@@ -101,7 +100,6 @@ class LastFM(commands.Cog):
             album_name_encoded = urllib.parse.quote(album_name)
             album_url = f"https://www.last.fm/music/{album_name_encoded}"
 
-            #embed = discord.Embed(title=f"**{username}** - Now playing: ", description=f" **{song}** by **{artist}** \n on **{album}**", color=discord.Color.default())
             embed = discord.Embed(
                 title=f"**{username}** - Now playing: ",
                 url = f"https://www.last.fm/user/{username}",
@@ -161,9 +159,9 @@ class LastFM(commands.Cog):
                 # Replace spaces with %20 using urllib.parse.quote
                 artist_name_encoded = urllib.parse.quote(artist_name)
                 artist_url = f"https://www.last.fm/music/{artist_name_encoded}"
-                #print(track)
-                #print("attr" + track['@attr']['nowplaying'])
-                now_playing = track.get('@attr', {}).get('nowplaying', None)
+
+                # Have to do it like this cause of some problem with '@' in python
+                now_playing = track.get('@attr', {}).get('nowplaying', None) 
 
                 if(j == 0 and now_playing == 'true'):
                     embed.add_field(name=f"", value=f"{j+1}. "+f"[{track['artist']['#text']}]({artist_url})" +" - " +
@@ -222,6 +220,20 @@ async def get_playcount(url):
     data = response.json()
     playcount = data["user"]["playcount"]
     return playcount
+
+# yoinked this code from a friend :)
+def format_time(timestamp):
+    dt = datetime.utcfromtimestamp(int(timestamp))
+    now = datetime.utcnow()
+    diff = now - dt
+    if diff < datetime.timedelta(minutes=1):
+        return "just now"
+    elif diff < datetime.timedelta(hours=1):
+        minutes = diff.seconds // 60
+        return f"{minutes} minute{'s' if minutes > 1 else ''} ago"
+    else:
+        hours = diff.seconds // 3600
+        return f"{hours} hour{'s' if hours > 1 else ''} ago"
 
 async def setup(client):
     await client.add_cog(LastFM(client, settings.lastfm_api_key, settings.lastfm_secret_api_key))

@@ -162,3 +162,4 @@ cython_debug/
 .vscode/
 database.db
 apikeys.py
+*.code-workspace

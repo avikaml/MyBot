@@ -127,8 +127,6 @@ class LastFM(commands.Cog):
     @commands.command(alias=['lf recent', 'lf recenttracks', 'lf recent tracks', 'lfrt'])
     async def lfrecent(self, ctx, username=None):
         ''' Returns the recent tracks played by the user
-            atm doesn't show time for the first track cause it causes a bug
-            can be very easily fixed
             To be added:
             - proper timestamp using the actual time lastfm give i guess or the datetime library?
             - add a reaction to the message to allow the user to go to the next page of track
@@ -136,7 +134,7 @@ class LastFM(commands.Cog):
             - add a reaction to the message to allow the user to go to the first page of track
             - add a reaction to the message to allow the user to go to the last page of track
             Reference point : the lfc lf bot, it's very clean
-            - The first track isnt always now playing, need to fix that         if track["@attr"]["nowplaying"] == "true":
+            - Add proper timestamps to each song instead of what lastfm api gives
         '''
 
         logger.info(f"User: {ctx.author} (ID: {ctx.author.id}) used the lf recent command in {ctx.guild.name} (ID: {ctx.guild.id})")
@@ -159,13 +157,15 @@ class LastFM(commands.Cog):
             embed.set_thumbnail(url = ctx.author.avatar.url)
             
             for j, track in enumerate(tracks[0:10]):
-                #print(track)
                 artist_name = track['artist']['#text']
                 # Replace spaces with %20 using urllib.parse.quote
                 artist_name_encoded = urllib.parse.quote(artist_name)
                 artist_url = f"https://www.last.fm/music/{artist_name_encoded}"
-                #print(track['date']['#text'])
-                if(j == 0):
+                #print(track)
+                #print("attr" + track['@attr']['nowplaying'])
+                now_playing = track.get('@attr', {}).get('nowplaying', None)
+
+                if(j == 0 and now_playing == 'true'):
                     embed.add_field(name=f"", value=f"{j+1}. "+f"[{track['artist']['#text']}]({artist_url})" +" - " +
                                     f"[{track['name']}]({track['url']})" +
                                     " - " + "now playing...", inline=False)

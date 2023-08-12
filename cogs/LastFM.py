@@ -133,7 +133,6 @@ class LastFM(commands.Cog):
             - add a reaction to the message to allow the user to go to the first page of track
             - add a reaction to the message to allow the user to go to the last page of track
             Reference point : the lfc lf bot, it's very clean
-            - Add proper timestamps to each song instead of what lastfm api gives
         '''
 
         logger.info(f"User: {ctx.author} (ID: {ctx.author.id}) used the lf recent command in {ctx.guild.name} (ID: {ctx.guild.id})")
@@ -145,7 +144,6 @@ class LastFM(commands.Cog):
         try:
             url = f"http://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user={username}&api_key={self.api_key}&format=json"
             tracks = await get_recent_tracks(url)
-            #print(tracks[:1])
             # user_profile_url = f"https://www.last.fm/user/{username}"
             embed = discord.Embed(
                 title=f"**{username}'s** recent tracks",
@@ -160,8 +158,6 @@ class LastFM(commands.Cog):
                 # Replace spaces with %20 using urllib.parse.quote
                 artist_name_encoded = urllib.parse.quote(artist_name)
                 artist_url = f"https://www.last.fm/music/{artist_name_encoded}"
-                #track_time = track['date']['uts']
-                #formatted_time = await format_time(track_time)
 
                 # Have to do it like this cause of some problem with '@' in python
                 now_playing = track.get('@attr', {}).get('nowplaying', None) 

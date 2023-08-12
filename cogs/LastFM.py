@@ -8,6 +8,7 @@ import settings
 import urllib.parse
 import datetime
 from datetime import datetime, timedelta, timezone
+import time
 
 logger = SingletonLogger.get_logger()
 
@@ -115,8 +116,7 @@ class LastFM(commands.Cog):
             url = f"http://ws.audioscrobbler.com/2.0/?method=user.getInfo&user={username}&api_key={self.api_key}&format=json"
             playcount = await get_playcount(url)
             embed.set_footer(text=f"Total scrobbles: {playcount}")
-            ##
-            
+
             await ctx.send(embed=embed)
 
         except Exception as e:
@@ -162,15 +162,21 @@ class LastFM(commands.Cog):
 
                 # Have to do it like this cause of some problem with '@' in python
                 now_playing = track.get('@attr', {}).get('nowplaying', None) 
+                track_name = track['name']
+
+                if(len(track_name) > 20):
+                    track_name = track_name[0:20] + "..."
 
                 if(j == 0 and now_playing == 'true'):
                     embed.add_field(name=f"", value=f"{j+1}. "+f"[{track['artist']['#text']}]({artist_url})" +" - " +
-                                    f"[{track['name']}]({track['url']})" +
-                                    " - " + "now playing...", inline=False)
+                                    f"[{track_name}]({track['url']})" +
+                                    " - " + "Now playing", inline=False)
                 else:
+                    track_date = track.get('date', {}).get('uts', 'Unknown Date') # Doing this because this works for some reason...
+                    timestamp = await format_time(track_date)
                     embed.add_field(name=f"", value=f"{j+1}. "+f"[{track['artist']['#text']}]({artist_url})" +" - " +
-                                 f"[{track['name']}]({track['url']})" +
-                                 " - " + f"{await format_time(track['date']['uts'])}", inline=False)
+                                 f"[{track_name}]({track['url']})" +
+                                 " - " + f"{timestamp}", inline=False)
 
             await ctx.send(embed=embed)
 
@@ -230,7 +236,7 @@ async def format_time(timestamp):
         return "just now"
     elif diff < timedelta(hours=1):
         minutes = diff.seconds // 60
-        return f"{minutes} minute{'s' if minutes > 1 else ''} ago"
+        return f"{minutes} min{'s' if minutes > 1 else ''} ago"
     elif diff < timedelta(days=1):
         hours = diff.seconds // 3600
         return f"{hours} hour{'s' if hours != 1 else ''} ago"

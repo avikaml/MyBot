@@ -155,13 +155,8 @@ class LastFM(commands.Cog):
             #embed.set_thumbnail(url = ctx.author.avatar.url)
             embed.set_footer(text=f"Page 1/{len(tracks)}")
 
-
             track_list_value = await get_track_list(tracks)
-            '''if len(track_list_value) > 1024:
-            # Truncate the track list to fit within the limit
-                track_list_value = track_list_value[:1020] + "..." '''
             embed.description = track_list_value
-            #embed.add_field(name=f"", value=track_list_value, inline=False)
             await ctx.send(embed=embed)
 
         except Exception as e:
@@ -188,19 +183,14 @@ async def get_track_list(tracks):
 
         if(j == 0 and now_playing == 'true'):
             track_list.append(track_info + " - " + "Now playing")
-            '''embed.add_field(name=f"", value=track_info +" - " +
-                            "Now playing", inline=False)'''
+            
         else:
             track_date = track.get('date', {}).get('uts', 'Unknown Date') # Doing this because this works for some reason...
             timestamp = await format_time(track_date)
             track_list.append(track_info + " - " + f"{timestamp}")
-            '''embed.add_field(name=f"", value=track_info +
-                            " - " + f"{timestamp}", inline=False)'''
-    # Check if the combined track_list_value exceeds Discord's limit
+
     track_list_value = "\n".join(track_list)
-    #if len(track_list_value) > 1024:
-    # Truncate the track list to fit within the limit
-    #    track_list_value = track_list_value[:1020] + "..." 
+
     return track_list_value
 
 async def get_lastfm_username(discord_id):

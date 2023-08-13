@@ -145,44 +145,63 @@ class LastFM(commands.Cog):
         try:
             url = f"http://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user={username}&api_key={self.api_key}&format=json"
             tracks = await get_recent_tracks(url)
-            # user_profile_url = f"https://www.last.fm/user/{username}"
+            user_profile_url = f"https://www.last.fm/user/{username}"
             embed = discord.Embed(
-                title=f"**{username}'s** recent tracks",
-                url=f"https://www.last.fm/user/{username}",
+                title=f"{username}'s recent tracks",
+                url=f"{user_profile_url}",
                 color=discord.Color.default()
             )
-            embed.set_author(name="LastFM", icon_url='https://images-ext-2.discordapp.net/external/yXB4N2dn_VX55UFo4EUH-rdq3JZs7Mo04nYbYiHbhF4/https/i.imgur.com/UKJPKD5.png')
-            embed.set_thumbnail(url = ctx.author.avatar.url)
-            
-            for j, track in enumerate(tracks[0:10]):
-                artist_name = track['artist']['#text']
-                # Replace spaces with %20 using urllib.parse.quote
-                artist_name_encoded = urllib.parse.quote(artist_name)
-                artist_url = f"https://www.last.fm/music/{artist_name_encoded}"
+            embed.set_author(name=f"LastFM", icon_url='https://images-ext-2.discordapp.net/external/yXB4N2dn_VX55UFo4EUH-rdq3JZs7Mo04nYbYiHbhF4/https/i.imgur.com/UKJPKD5.png')
+            #embed.set_thumbnail(url = ctx.author.avatar.url)
+            embed.set_footer(text=f"Page 1/{len(tracks)}")
 
-                # Have to do it like this cause of some problem with '@' in python
-                now_playing = track.get('@attr', {}).get('nowplaying', None) 
-                track_name = track['name']
 
-                if(len(track_name) > 20):
-                    track_name = track_name[0:20] + "..."
-
-                if(j == 0 and now_playing == 'true'):
-                    embed.add_field(name=f"", value=f"{j+1}. "+f"[{track['artist']['#text']}]({artist_url})" +" - " +
-                                    f"[{track_name}]({track['url']})" +
-                                    " - " + "Now playing", inline=False)
-                else:
-                    track_date = track.get('date', {}).get('uts', 'Unknown Date') # Doing this because this works for some reason...
-                    timestamp = await format_time(track_date)
-                    embed.add_field(name=f"", value=f"{j+1}. "+f"[{track['artist']['#text']}]({artist_url})" +" - " +
-                                 f"[{track_name}]({track['url']})" +
-                                 " - " + f"{timestamp}", inline=False)
-
+            track_list_value = await get_track_list(tracks)
+            '''if len(track_list_value) > 1024:
+            # Truncate the track list to fit within the limit
+                track_list_value = track_list_value[:1020] + "..." '''
+            embed.description = track_list_value
+            #embed.add_field(name=f"", value=track_list_value, inline=False)
             await ctx.send(embed=embed)
 
         except Exception as e:
             await ctx.send(f"Error: {e}")
             logger.error(f"Error: {e}")
+
+async def get_track_list(tracks):
+    track_list = []
+    for j, track in enumerate(tracks[0:10]):
+        artist_name = track['artist']['#text']
+        # Replace spaces with %20 using urllib.parse.quote
+        artist_name_encoded = urllib.parse.quote(artist_name)
+        artist_url = f"https://www.last.fm/music/{artist_name_encoded}"
+
+        # Have to do it like this cause of some problem with '@' in python
+        now_playing = track.get('@attr', {}).get('nowplaying', None) 
+        track_name = track['name']
+
+        if(len(track_name) > 20):
+            track_name = track_name[0:20] + "..."
+
+        track_info = f"{j+1}. [{track['artist']['#text']}]({artist_url}) - " \
+                        f"[{track_name}]({track['url']})"
+
+        if(j == 0 and now_playing == 'true'):
+            track_list.append(track_info + " - " + "Now playing")
+            '''embed.add_field(name=f"", value=track_info +" - " +
+                            "Now playing", inline=False)'''
+        else:
+            track_date = track.get('date', {}).get('uts', 'Unknown Date') # Doing this because this works for some reason...
+            timestamp = await format_time(track_date)
+            track_list.append(track_info + " - " + f"{timestamp}")
+            '''embed.add_field(name=f"", value=track_info +
+                            " - " + f"{timestamp}", inline=False)'''
+    # Check if the combined track_list_value exceeds Discord's limit
+    track_list_value = "\n".join(track_list)
+    #if len(track_list_value) > 1024:
+    # Truncate the track list to fit within the limit
+    #    track_list_value = track_list_value[:1020] + "..." 
+    return track_list_value
 
 async def get_lastfm_username(discord_id):
     conn = sqlite3.connect('database.db')

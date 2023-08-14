@@ -9,6 +9,8 @@ import urllib.parse
 import datetime
 from datetime import datetime, timedelta, timezone
 import time
+import asyncio
+from modules.util import Pagination
 
 logger = SingletonLogger.get_logger()
 
@@ -74,10 +76,8 @@ class LastFM(commands.Cog):
 
     @commands.command(case_insensitive=True, alias=['lf np'])
     async def lf(self, ctx, username=None):
-        ''' Returns the currently playing track of the user, or his last played track if he isn't playing anything
-            To be added:
-            - Add a footer with amount of scrobbles on the song - currently just shows total amount of scrobbles on the user
-        '''
+        ''' Returns the currently playing track of the user, or his last played track if he isn't playing anything. '''
+
         logger.info(f"User: {ctx.author} (ID: {ctx.author.id}) used the lf command in {ctx.guild.name} (ID: {ctx.guild.id})")
         if(username is None):
             if(not await has_lastfm_username(ctx.author.id)):
@@ -112,10 +112,16 @@ class LastFM(commands.Cog):
             embed.set_thumbnail(url=image)
             embed.add_field(name="Previous track", value=f"**{prev_track['name']}** by **{prev_track['artist']['#text']}**", inline=False)
 
-            # Get playcount
-            url = f"http://ws.audioscrobbler.com/2.0/?method=user.getInfo&user={username}&api_key={self.api_key}&format=json"
-            playcount = await get_playcount(url)
-            embed.set_footer(text=f"Total scrobbles: {playcount}")
+            # Get total playcount
+            # url = f"http://ws.audioscrobbler.com/2.0/?method=user.getInfo&user={username}&api_key={self.api_key}&format=json"
+            # playcount = await get_playcount(url)
+
+            # Get individual track playcount
+            url = f'http://ws.audioscrobbler.com/2.0/?method=user.getTrackScrobbles&user={username}&artist={artist_name}&track={track_name}&api_key={self.api_key}&format=json'
+            response = requests.get(url)
+            data = response.json()
+            playcount = int(data['trackscrobbles']['@attr']['total'])
+            embed.set_footer(text=f"Track scrobbles: {playcount}")
 
             await ctx.send(embed=embed)
 
@@ -125,14 +131,11 @@ class LastFM(commands.Cog):
 
     # TBC
     @commands.command(alias=['lf recent', 'lf recenttracks', 'lf recent tracks', 'lfrt'])
-    async def lfrecent(self, ctx, username=None):
+    async def lfrecent(self, ctx, username=None, page=1):
         ''' Returns the recent tracks played by the user
             To be added:
-            - proper timestamp using the actual time lastfm give i guess or the datetime library?
-            - add a reaction to the message to allow the user to go to the next page of track
-            - add a reaction to the message to allow the user to go to the previous page of track
-            - add a reaction to the message to allow the user to go to the first page of track
-            - add a reaction to the message to allow the user to go to the last page of track
+            - add a button to the message to allow the user to go to the next/previous page of track
+            - add a button to the message to allow the user to go to the first/last page of track
             Reference point : the lfc lf bot, it's very clean
         '''
 
@@ -156,16 +159,53 @@ class LastFM(commands.Cog):
             embed.set_footer(text=f"Page 1/{len(tracks)}")
 
             track_list_value = await get_track_list(tracks)
+
+            #view = Pagination(pages = track_list_value)
+            
             embed.description = track_list_value
+            #message = await ctx.send(embed=embed)
+            #await ctx.send(embed=embed, view=view)
             await ctx.send(embed=embed)
 
         except Exception as e:
             await ctx.send(f"Error: {e}")
-            logger.error(f"Error: {e}")
+            logger.critical(f"Error: {e}")
 
-async def get_track_list(tracks):
+async def get_track_list_batch(tracks, page=1):
     track_list = []
-    for j, track in enumerate(tracks[0:10]):
+    
+    # Loop through batches of tracks (10 tracks per batch)
+    for batch_start in range(0, len(tracks), 10):
+        batch = tracks[batch_start : batch_start + 10]
+        for j, track in enumerate(batch):
+            artist_name = track['artist']['#text']
+            # Replace spaces with %20 using urllib.parse.quote
+            artist_name_encoded = urllib.parse.quote(artist_name)
+            artist_url = f"https://www.last.fm/music/{artist_name_encoded}"
+
+            # Have to do it like this cause of some problem with '@' in python
+            now_playing = track.get('@attr', {}).get('nowplaying', None) 
+            track_name = track['name']
+
+            if(len(track_name) > 20):
+                track_name = track_name[0:20] + "..."
+
+            track_info = f"{j+1 + batch_start}. [{track['artist']['#text']}]({artist_url}) - " \
+                            f"[{track_name}]({track['url']})"
+
+            if(j == 0 and now_playing == 'true'):
+                track_list.append(track_info + " - " + "Now playing")
+            else:
+                track_date = track.get('date', {}).get('uts', 'Unknown Date')
+                timestamp = await format_time(track_date)
+                track_list.append(track_info + " - " + f"{timestamp}")
+
+    track_list_value = "\n".join(track_list)
+    return track_list_value
+
+async def get_track_list(tracks, page=1): #page=1 ?????? (page-1)*10:page*10+10(0:10, 10:20,...)
+    track_list = []
+    for j, track in enumerate(tracks[(page-1)*10:page*10]):
         artist_name = track['artist']['#text']
         # Replace spaces with %20 using urllib.parse.quote
         artist_name_encoded = urllib.parse.quote(artist_name)

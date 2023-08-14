@@ -8,23 +8,26 @@ class Pagination(View):
         super().__init__()
         self.pages = pages
         self.current_page = 0
+        self.message = None
 
-    async def show_page(self, interaction=None):
-        page = self.pages[self.current_page]
+    async def show_page(self, interaction: discord.Interaction, button: discord.ui.Button = None):
+        page = self.pages[self.current_page*10:(self.current_page + 1)*10] # test
+        print(self.pages[0])
+        print(page)
         embed = discord.Embed(title=f"Page {self.current_page + 1}/{len(self.pages)}", description=page)
         
         if len(self.pages) > 1:
-            embed.set_footer(text="Use the buttons to navigate between pages.")
+            embed.set_footer(text=f"Use the buttons to navigate between pages.")
 
         if interaction:
-            await interaction.response.edit_message(embed=embed)
-        else:
-            return await interaction.response.send_message(embed=embed, view=self)
+            await interaction.response.edit_message(embed=embed, view=self)
+        """ else:
+            self.message = await interaction.response.send_message(embed=embed, view=self) """
 
     @discord.ui.button(label="<<")
     async def first_page(self, button: discord.ui.Button, interaction: discord.Interaction):
         self.current_page = 0
-        await self.show_page(interaction)
+        await self.show_page(interaction=interaction)
     
     @discord.ui.button(label="<")
     async def previous_page(self, button: discord.ui.Button, interaction: discord.Interaction):
@@ -33,7 +36,7 @@ class Pagination(View):
         else:
             self.current_page -= 1
         
-        await self.show_page(interaction)
+        await self.show_page(interaction=interaction)
     
     @discord.ui.button(label=">")
     async def next_page(self, button: discord.ui.Button, interaction: discord.Interaction):
@@ -42,23 +45,16 @@ class Pagination(View):
         else:
             self.current_page += 1
         
-        await self.show_page(interaction)
+        await self.show_page(interaction=interaction)
     
     @discord.ui.button(label=">>")
     async def last_page(self, button: discord.ui.Button, interaction: discord.Interaction):
         self.current_page = len(self.pages) - 1
-        await self.show_page(interaction)
-
-    async def interaction_check(self, interaction: discord.Interaction):
-        if interaction.user.id == self.pages[0].author.id:
-            return True
-        else:
-            await interaction.response.send_message("Sorry, only the author of this embed can use these buttons.", ephemeral=True)
-            return False
+        await self.show_page(interaction=interaction)
     
     async def on_timeout(self):
         try:
-            await self.message.delete()
-        except discord.NotFound:
+            await self.message.delete() # error...
+        except discord.NotFound: 
             pass
 

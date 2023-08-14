@@ -156,17 +156,18 @@ class LastFM(commands.Cog):
             )
             embed.set_author(name=f"LastFM", icon_url='https://images-ext-2.discordapp.net/external/yXB4N2dn_VX55UFo4EUH-rdq3JZs7Mo04nYbYiHbhF4/https/i.imgur.com/UKJPKD5.png')
             #embed.set_thumbnail(url = ctx.author.avatar.url)
-            embed.set_footer(text=f"Page 1/{len(tracks)}")
+            #embed.set_footer(text=f"Page 1/{len(tracks)}")
 
             track_list_value = await get_track_list(tracks)
-
-            #view = Pagination(pages = track_list_value)
-            
             embed.description = track_list_value
-            #message = await ctx.send(embed=embed)
-            #await ctx.send(embed=embed, view=view)
-            await ctx.send(embed=embed)
+            #await ctx.send(embed=embed)
 
+            track_list_value = await get_track_list_batch(tracks, page)
+
+            view = Pagination(pages = track_list_value)
+            #message = await ctx.send(embed=embed)
+            await ctx.send(embed=embed, view=view)
+            
         except Exception as e:
             await ctx.send(f"Error: {e}")
             logger.critical(f"Error: {e}")
@@ -200,8 +201,8 @@ async def get_track_list_batch(tracks, page=1):
                 timestamp = await format_time(track_date)
                 track_list.append(track_info + " - " + f"{timestamp}")
 
-    track_list_value = "\n".join(track_list)
-    return track_list_value
+    #track_list_value = "\n".join(track_list)
+    return track_list
 
 async def get_track_list(tracks, page=1): #page=1 ?????? (page-1)*10:page*10+10(0:10, 10:20,...)
     track_list = []

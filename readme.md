@@ -13,15 +13,15 @@ Current Features:
 6. Logging
 7. !weather {cityname} command that fetches the current weather for a specified city using the OpenWeatherMap API
 8. !avatar @username command that displays the avatar of the specified user
-9. SQL database to store information
+9. SQL database to store information - mostly lf related stuff as of now
 10. !tweet command that embeds tweets, is currently broken due to twitter shenanigans, instead !vx exists
-11. lastfm commands, currently there exist: lfset, lfchange(temporary, should be part of lfset), !lf np, !lfrecent
+11. lastfm commands, currently there exist: lfset, lfchange(temporary, should be part of lfset), !lf np, !lfrecent, !lftoptracks - time period, 
 
 
 Planned Features:
 1. Embeds for gifs, etc
 2. Block certain words - a la delete the forbidden message and post a warning to that user 
-3. LastFM integration - !lfset, !lf np, !lfrecent, !lfchart, !lfartist, !lfalbum, !lftoptracks, !lftopartists, !lftopalbums, !lfartistinfo, !lfalbuminfo, !lftrackinfo, !lfartisttags, !lfalbumtags, !lftracktags, !lfartistbio, !lfalbumbio, !lftrackbio, !lfartistwiki, !lfalbumwiki, !lftrackwiki, !lfartistsearch, !lfalbumsearch, !lftracksearch, !lfartistcorrection, !lfalbumcorrection, !lftrackcorrection, !lfartistaddtags, !lfalbumaddtags, !lftrackaddtags, !lfartistremovetags, !lfalbumremovetags, !lftrackremovetags, !lfartisttags, !lfalbumtags, !lftracktags, !lfartisttopalbums, !lfartisttoptracks, !lfarti
+3. LastFM integration - !lftopartists, !lftopalbums, !lfartist, !lfchart
 4. Spotify integration? 
 5. Starboard integration
 6. Tests

@@ -210,7 +210,7 @@ async def get_top_tracks_list_batch(tracks):
                 track_name = track_name[0:20] + "..."
         artist_name = track['artist']['name']
         playcount = track['playcount']
-        track_list.append(f"{i+1}. [{track_name} by {artist_name}]({track['url']}) - {playcount} plays")
+        track_list.append(f"`{i+1}.` [{track_name} by {artist_name}]({track['url']}) - {playcount} plays")
 
     #track_list_value = "\n".join(track_list)
     return track_list
@@ -225,7 +225,7 @@ async def get_top_tracks_base(tracks, page=1):
                 track_name = track_name[0:20] + "..."
             artist_name = track['artist']['name']
             playcount = track['playcount']
-            track_list.append(f"{j+1}. [{track_name} by {artist_name}]({track['url']}) - {playcount} plays")
+            track_list.append(f"`{j+1}.` [{track_name} by {artist_name}]({track['url']}) - {playcount} plays")
 
     #track_list_value = "\n".join(track_list)
     return track_list
@@ -266,7 +266,7 @@ async def get_track_list_batch(tracks, page=1):
             if(len(track_name) > 20):
                 track_name = track_name[0:20] + "..."
 
-            track_info = f"{j+1 + batch_start}. [{track['artist']['#text']}]({artist_url}) - " \
+            track_info = f"`{j+1 + batch_start}.` [{track['artist']['#text']}]({artist_url}) - " \
                             f"[{track_name}]({track['url']})"
 
             if(j == 0 and now_playing == 'true'):
@@ -294,7 +294,7 @@ async def get_track_list(tracks, page=1): #page=1 ?????? (page-1)*10:page*10+10(
         if(len(track_name) > 20):
             track_name = track_name[0:20] + "..."
 
-        track_info = f"{j+1}. [{track['artist']['#text']}]({artist_url}) - " \
+        track_info = f"`{j+1}.` [{track['artist']['#text']}]({artist_url}) - " \
                         f"[{track_name}]({track['url']})"
 
         if(j == 0 and now_playing == 'true'):

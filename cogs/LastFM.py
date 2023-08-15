@@ -156,7 +156,7 @@ class LastFM(commands.Cog):
 
             track_list_value = await get_track_list_batch(tracks, page)
 
-            view = Pagination(track_list_value, username, user_profile_url)
+            view = Pagination(track_list_value, embed)
             #message = await ctx.send(embed=embed)
             await ctx.send(embed=embed, view=view)
             
@@ -191,7 +191,7 @@ class LastFM(commands.Cog):
             track_list_value = await get_top_tracks_list_batch(tracks)
             #await ctx.send(embed=embed)
 
-            view = Pagination(track_list_value, username, user_profile_url)
+            view = Pagination(track_list_value, embed)
             #message = await ctx.send(embed=embed)
             await ctx.send(embed=embed, view=view)
 

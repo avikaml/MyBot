@@ -176,6 +176,9 @@ class LastFM(commands.Cog):
             url = f"http://ws.audioscrobbler.com/2.0/?method=user.gettoptracks&user={username}&api_key={self.api_key}&format=json"
             tracks = await get_top_tracks(time, url)
             user_profile_url = f"https://www.last.fm/user/{username}"
+            if time not in ('all', 'week', 'month', 'year', 'Year', 'Month', 'Week', 'All'):
+                await ctx.send("Invalid time period. Please use `all`, `week`, `month`, or `year`.")
+                return
             embed = discord.Embed(
                 title=f"{username}'s top tracks ({time})",
                 url=f"{user_profile_url}",
@@ -228,13 +231,13 @@ async def get_top_tracks_base(tracks, page=1):
     return track_list
 
 async def get_top_tracks(time, url):
-    if(time == 'all' or time =='a'):
+    if(time == 'all' or time =='a' or time == 'All' or time == 'overall'):
         url += '&period=overall'
-    elif(time == 'week' or time == 'w'):
+    elif(time == 'week' or time == 'w' or time == 'Week'):
         url += '&period=7day'
-    elif(time == 'month' or time == 'm'):
+    elif(time == 'month' or time == 'm' or time == 'Month'):
         url += '&period=1month'
-    elif(time == 'year' or time == 'y'):
+    elif(time == 'year' or time == 'y' or time == 'Year'):
         url += '&period=12month'
     else:
         url += '&period=overall'

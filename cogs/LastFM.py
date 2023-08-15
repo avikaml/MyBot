@@ -132,13 +132,6 @@ class LastFM(commands.Cog):
     # TBC
     @commands.command(alias=['lf recent', 'lf recenttracks', 'lf recent tracks', 'lfrt'])
     async def lfrecent(self, ctx, username=None, page=1):
-        ''' Returns the recent tracks played by the user
-            To be added:
-            - add a button to the message to allow the user to go to the next/previous page of track
-            - add a button to the message to allow the user to go to the first/last page of track
-            Reference point : the lfc lf bot, it's very clean
-        '''
-
         logger.info(f"User: {ctx.author} (ID: {ctx.author.id}) used the lf recent command in {ctx.guild.name} (ID: {ctx.guild.id})")
         if(username is None):
             if(not await has_lastfm_username(ctx.author.id)):
@@ -164,7 +157,7 @@ class LastFM(commands.Cog):
 
             track_list_value = await get_track_list_batch(tracks, page)
 
-            view = Pagination(pages = track_list_value)
+            view = Pagination(track_list_value, username, user_profile_url)
             #message = await ctx.send(embed=embed)
             await ctx.send(embed=embed, view=view)
             

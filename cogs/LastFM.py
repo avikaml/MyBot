@@ -11,6 +11,7 @@ from datetime import datetime, timedelta, timezone
 import time
 import asyncio
 from modules.util import Pagination
+import aiohttp
 
 logger = SingletonLogger.get_logger()
 
@@ -202,6 +203,104 @@ class LastFM(commands.Cog):
             await ctx.send(f"Error: {e}")
             logger.error(f"Error: {e}")
 
+    @commands.command(aliases=['lf artist', 'lfartistinfo'])
+    async def lfartist(self, ctx, artist=None, username=None, limit=10):
+        ''' Get the user's top 10 albums and top 10 songs of a specific artist
+            THIS COMMAND IS BROKEN - I will fix it later if possible!
+           '''
+        logger.info(f"User: {ctx.author} (ID: {ctx.author.id}) used the lf artist command in {ctx.guild.name} (ID: {ctx.guild.id})")
+        if(username is None): # 208 - 213 should be made into a function that is called becuase it is used in multiple commands
+            if(not await has_lastfm_username(ctx.author.id)):
+                await ctx.send("You don't have a LastFM username set.")
+                return
+        if(artist is None):
+            await ctx.send("Please specify an artist.")
+            return
+        
+        username = await get_lastfm_username(ctx.author.id)
+
+        try:
+            user_url = f"https://www.last.fm/user/{username}"
+            albums_url = f"http://ws.audioscrobbler.com/2.0/?method=artist.gettopalbums&artist={artist}&api_key={self.api_key}&format=json&limit={limit}"
+            tracks_url = f"http://ws.audioscrobbler.com/2.0/?method=artist.gettoptracks&artist={artist}&api_key={self.api_key}&format=json&limit={limit}"
+            
+            user_album_playcount = await self.get_user_album_playcount(albums_url, username)
+            sorted_albums = sorted(user_album_playcount.items(), key=lambda item: item[1], reverse=True)[:limit]
+            albums_text = "\n".join([f"`{i+1}.` {album} - {playcount} plays" for i, (album, playcount) in enumerate(sorted_albums)])
+
+            user_track_playcount = await self.get_user_track_playcount(tracks_url, username)
+            sorted_tracks = sorted(user_track_playcount.items(), key=lambda item: item[1], reverse=True)[:limit]
+            tracks_text = "\n".join([f"`{i+1}.` {track} - {playcount} plays" for i, (track, playcount) in enumerate(sorted_tracks)])
+
+            embed = discord.Embed(
+                title=f"{username}'s top tracks and albums of {artist}",
+                url=user_url,
+                color=discord.Color.default()
+            )
+            embed.set_author(name="LastFM", icon_url='https://images-ext-2.discordapp.net/external/yXB4N2dn_VX55UFo4EUH-rdq3JZs7Mo04nYbYiHbhF4/https/i.imgur.com/UKJPKD5.png')
+            total_text = f"**Top Albums**\n{albums_text}\n\n**Top Tracks**\n{tracks_text}"
+            embed.description = total_text
+
+            await ctx.send(embed=embed)
+        except Exception as e:
+            await ctx.send(f"Error: {e}")
+            logger.error(f"Error: {e}")
+
+
+    async def get_user_album_playcount(self, albums_url, username):
+            async with aiohttp.ClientSession() as session:
+                async with session.get(albums_url) as response:
+                    data = await response.json()
+
+                    user_album_playcount = {}
+                    if 'topalbums' in data and 'album' in data['topalbums']:
+                        albums = data['topalbums']['album']
+                        for album in albums:
+                            album_name = album['name']
+                            album_artist = album['artist']['name']
+                            user_playcount = await self.get_user_playcount_for_album(album_artist, album_name, username)
+                            user_album_playcount[f"{album_artist} - {album_name}"] = user_playcount
+
+                    return user_album_playcount
+
+    async def get_user_playcount_for_album(self, artist, album, username):
+        album_info_url = f"http://ws.audioscrobbler.com/2.0/?method=album.getinfo&artist={artist}&album={album}&api_key={self.api_key}&user={username}&format=json"
+        async with aiohttp.ClientSession() as session:
+            async with session.get(album_info_url) as response:
+                data = await response.json()
+
+                if 'album' in data and 'userplaycount' in data['album']:
+                    return int(data['album']['userplaycount'])
+                else:
+                    return 0
+
+    async def get_user_track_playcount(self, tracks_url, username):
+        async with aiohttp.ClientSession() as session:
+            async with session.get(tracks_url) as response:
+                data = await response.json()
+
+                user_track_playcount = {}
+                if 'toptracks' in data and 'track' in data['toptracks']:
+                    tracks = data['toptracks']['track']
+                    for track in tracks:
+                        track_name = track['name']
+                        track_artist = track['artist']['name']
+                        user_playcount = await self.get_user_playcount_for_track(track_artist, track_name, username)
+                        user_track_playcount[f"{track_artist} - {track_name}"] = user_playcount
+
+                return user_track_playcount
+
+    async def get_user_playcount_for_track(self, artist, track, username):
+        track_info_url = f"http://ws.audioscrobbler.com/2.0/?method=track.getInfo&artist={artist}&track={track}&api_key={self.api_key}&user={username}&format=json"
+        async with aiohttp.ClientSession() as session:
+            async with session.get(track_info_url) as response:
+                data = await response.json()
+
+                if 'track' in data and 'userplaycount' in data['track']:
+                    return int(data['track']['userplaycount'])
+                else:
+                    return 0
+
 async def get_top_tracks_list_batch(tracks):
     track_list = []
     for i, track in enumerate(tracks):
@@ -368,6 +467,16 @@ async def format_time(timestamp):
     else:
         days = diff.days
         return f"{days} day{'s' if days != 1 else ''} ago"
+
+async def fetch_url(url):
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url) as response:
+            if response.status == 200:
+                return await response.json()
+            else:
+                # Handle errors here
+                response_text = await response.text()
+                raise Exception(f"Error fetching URL: {response_text}")
 
 async def setup(client):
     await client.add_cog(LastFM(client, settings.lastfm_api_key, settings.lastfm_secret_api_key))

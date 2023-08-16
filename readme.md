@@ -15,13 +15,13 @@ Current Features:
 8. !avatar @username command that displays the avatar of the specified user
 9. SQL database to store information - mostly lf related stuff as of now
 10. !tweet command that embeds tweets, is currently broken due to twitter shenanigans, instead !vx exists
-11. lastfm commands, currently there exist: lfset, lfchange(temporary, should be part of lfset), !lf np, !lfrecent, !lftoptracks - time period, 
+11. lastfm commands, currently there exist: lfset, lfchange(temporary, should be part of lfset), !lf np, !lfrecent, !lftoptracks - time period, !lfartist(broken atm!), 
 
 
 Planned Features:
 1. Embeds for gifs, etc
 2. Block certain words - a la delete the forbidden message and post a warning to that user 
-3. LastFM integration - !lftopartists, !lftopalbums, !lfartist, !lfchart
+3. LastFM integration - !lftopartists, !lftopalbums, !lfartist - fix, !lfchart
 4. Spotify integration? 
 5. Starboard integration
 6. Tests
@@ -33,6 +33,7 @@ Planned Features:
 12. !userinfo command
 13. add logger to all the cogs so they log
 14. !tiktok command for tiktok embeds with vx
+15. aiohttp
 
 Next features to work on: 7, 8, 1, 2 (Not necessarily in that order)
 

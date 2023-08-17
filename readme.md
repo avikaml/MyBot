@@ -21,7 +21,7 @@ Current Features:
 Planned Features:
 1. Embeds for gifs, etc
 2. Block certain words - a la delete the forbidden message and post a warning to that user 
-3. LastFM integration - !lfartist - need to fix, !lfchart - if provided by the API, and need to fix up code to be more modular
+3. LastFM integration - !lfartist - need to fix, !lfchart - if provided by the API, and need to fix up code to be more modular, !lftrack to get track info
 4. Spotify integration? 
 5. Starboard integration
 6. Tests

@@ -245,7 +245,82 @@ class LastFM(commands.Cog):
         except Exception as e:
             await ctx.send(f"Error: {e}")
             logger.error(f"Error: {e}")
+    
+    @commands.command(aliases=['lfta', 'lfalbums'])
+    async def lftopalbums(self, ctx, time='all', username = None, page = 1):
+        logger.info(f"User: {ctx.author} (ID: {ctx.author.id}) used the lf top albums command in {ctx.guild.name} (ID: {ctx.guild.id})")
+        if(username is None):
+            if(not await has_lastfm_username(ctx.author.id)):
+                await ctx.send("You don't have a LastFM username set.")
+                return
+        username = await get_lastfm_username(ctx.author.id)
+        try:
+            url = f"http://ws.audioscrobbler.com/2.0/?method=user.gettopalbums&user={username}&api_key={self.api_key}&format=json"
+            tracks = await get_top_tracks(time, url, 'topalbums')
+            user_profile_url = f"https://www.last.fm/user/{username}"
+            if time not in ('all', 'week', 'month', 'year', 'Year', 'Month', 'Week', 'All'):
+                await ctx.send("Invalid time period. Please use `all`, `week`, `month`, or `year`.")
+                return
+            embed = discord.Embed(
+                title=f"{username}'s top albums ({time})",
+                url=f"{user_profile_url}",
+                color=discord.Color.default()
+            )
+            embed.set_author(name=f"LastFM", icon_url='https://images-ext-2.discordapp.net/external/yXB4N2dn_VX55UFo4EUH-rdq3JZs7Mo04nYbYiHbhF4/https/i.imgur.com/UKJPKD5.png')
+            track_list_value = await get_top_tracks_base(tracks)
+            track_list_value_desc = track_list_value[0:10]
+            track_list_value_desc = "\n".join(track_list_value_desc)
 
+            embed.description = track_list_value_desc
+
+            track_list_value = await get_top_tracks_list_batch(tracks)
+            #await ctx.send(embed=embed)
+
+            view = Pagination(track_list_value, embed)
+            #message = await ctx.send(embed=embed)
+            await ctx.send(embed=embed, view=view)
+
+        except Exception as e:
+            await ctx.send(f"Error: {e}")
+            logger.error(f"Error: {e}")
+
+    @commands.command(aliases=['lftartist', 'lftopartist', 'lftar'])
+    async def lftopartists(self, ctx, time='all', username = None, page = 1):
+        logger.info(f"User: {ctx.author} (ID: {ctx.author.id}) used the lf top artists command in {ctx.guild.name} (ID: {ctx.guild.id})")
+        if(username is None):
+            if(not await has_lastfm_username(ctx.author.id)):
+                await ctx.send("You don't have a LastFM username set.")
+                return
+        username = await get_lastfm_username(ctx.author.id)
+        try:
+            url = f"http://ws.audioscrobbler.com/2.0/?method=user.gettopartists&user={username}&api_key={self.api_key}&format=json"
+            tracks = await get_top_tracks(time, url, 'topartists')
+            user_profile_url = f"https://www.last.fm/user/{username}"
+            if time not in ('all', 'week', 'month', 'year', 'Year', 'Month', 'Week', 'All'):
+                await ctx.send("Invalid time period. Please use `all`, `week`, `month`, or `year`.")
+                return
+            embed = discord.Embed(
+                title=f"{username}'s top albums ({time})",
+                url=f"{user_profile_url}",
+                color=discord.Color.default()
+            )
+            embed.set_author(name=f"LastFM", icon_url='https://images-ext-2.discordapp.net/external/yXB4N2dn_VX55UFo4EUH-rdq3JZs7Mo04nYbYiHbhF4/https/i.imgur.com/UKJPKD5.png')
+            track_list_value = await get_top_artists_base(tracks)
+            track_list_value_desc = track_list_value[0:10]
+            track_list_value_desc = "\n".join(track_list_value_desc)
+
+            embed.description = track_list_value_desc
+
+            track_list_value = await get_top_artists_list_batch(tracks)
+            #await ctx.send(embed=embed)
+
+            view = Pagination(track_list_value, embed)
+            #message = await ctx.send(embed=embed)
+            await ctx.send(embed=embed, view=view)
+
+        except Exception as e:
+            await ctx.send(f"Error: {e}")
+            logger.error(f"Error: {e}")
 
     async def get_user_album_playcount(self, albums_url, username):
             async with aiohttp.ClientSession() as session:
@@ -314,6 +389,15 @@ async def get_top_tracks_list_batch(tracks):
     #track_list_value = "\n".join(track_list)
     return track_list
 
+async def get_top_artists_list_batch(artists):
+    artists_list = []
+    for i, artist in enumerate(artists):
+        artist_name = artist['name']
+        playcount = artist['playcount']
+        artists_list.append(f"`{i+1}.` [{artist_name}]({artist['url']}) - {playcount} plays")
+
+    return artists_list
+
 async def get_top_tracks_base(tracks, page=1):
     track_list = []
     for batch_start in range(0, len(tracks), 10):
@@ -329,7 +413,18 @@ async def get_top_tracks_base(tracks, page=1):
     #track_list_value = "\n".join(track_list)
     return track_list
 
-async def get_top_tracks(time, url):
+async def get_top_artists_base(artists, page=1):
+    artists_list = []
+    for batch_start in range(0, len(artists), 10):
+        batch = artists[batch_start : batch_start + 10]
+        for j, artist in enumerate(batch):
+            artist_name = artist['name']
+            playcount = artist['playcount']
+            artists_list.append(f"`{j+1}.` [{artist_name}]({artist['url']}) - {playcount} plays")
+    
+    return artists_list
+
+async def get_top_tracks(time, url, data_type='toptracks'):
     if(time == 'all' or time =='a' or time == 'All' or time == 'overall'):
         url += '&period=overall'
     elif(time == 'week' or time == 'w' or time == 'Week'):
@@ -342,7 +437,12 @@ async def get_top_tracks(time, url):
         url += '&period=overall'
     response = requests.get(url)
     data = response.json()
-    tracks = data['toptracks']['track']
+    if data_type == 'toptracks':
+        tracks = data['toptracks']['track']
+    elif data_type == 'topartists':
+        tracks = data['topartists']['artist']
+    else:
+        tracks = data['topalbums']['album']
     return tracks
     
 

@@ -322,6 +322,62 @@ class LastFM(commands.Cog):
             await ctx.send(f"Error: {e}")
             logger.error(f"Error: {e}")
 
+    @commands.command(aliases=['lfcharts'])
+    async def lfchart(self, ctx, chart_type='albums', time = 'all', username = None):
+        logger.info(f"User: {ctx.author} (ID: {ctx.author.id}) used the lf chart command in {ctx.guild.name} (ID: {ctx.guild.id})")
+        if(username is None):
+            if(not await has_lastfm_username(ctx.author.id)):
+                await ctx.send("You don't have a LastFM username set.")
+                return
+        username = await get_lastfm_username(ctx.author.id)
+        if chart_type not in ['artists', 'albums', 'tracks']:
+            await ctx.send("Invalid chart type. Please use 'artists', 'albums', or 'tracks'.")
+            return
+
+        if time not in ['all', 'week', 'month', 'year']:
+            await ctx.send("Invalid time period. Please use 'all', 'week', 'month', or 'year'.")
+            return
+
+        try:
+            time_period = await self.convert_time_for_chart(time)
+            # url isnt working properly
+            url = f"http://ws.audioscrobbler.com/2.0/?method=user.getweeklyalbumchart&user={username}&api_key={self.api_key}&format=json"
+            response = requests.get(url)
+            data = response.json()            
+
+            if chart_type in data and chart_type in data[chart_type]:
+                chart_data = data[chart_type][chart_type]
+                chart_list = []
+                for i, item in enumerate(chart_data):
+                    name = item['name']
+                    playcount = item.get('playcount', 'Unknown')
+                    chart_list.append(f"{i+1}. {name} - Playcount: {playcount}")
+
+                chart_text = "\n".join(chart_list)
+                embed = discord.Embed(
+                    title=f"Top 10 {chart_type.capitalize()} for {username} ({time_period.capitalize()})",
+                    description=chart_text,
+                    color=discord.Color.default()
+                )
+                await ctx.send(embed=embed)
+            else:
+                await ctx.send("No data available for the specified chart type.")
+
+        except Exception as e:
+            await ctx.send(f"Error: {e}")
+            logger.error(f"Error: {e}")
+
+
+    async def convert_time_for_chart(self, time):
+        if time == 'all':
+            return 'overall'
+        elif time == 'week':
+            return '7day'
+        elif time == 'month':
+            return '1month'
+        elif time == 'year':
+            return '12month'
+
     async def get_user_album_playcount(self, albums_url, username):
             async with aiohttp.ClientSession() as session:
                 async with session.get(albums_url) as response:

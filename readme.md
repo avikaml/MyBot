@@ -30,8 +30,9 @@ Planned Features:
 8. Slash commands
 9. !userinfo command
 10. aiohttp usage throught the whole project
+11. !rep system
 
-Next features to work on: 7, 8, 1, 2 (Not necessarily in that order)
+Next features to work on: Level system, Starboard, Block certain words, Rep
 
 Additional notes for myself:
 - LastFM commands could do with a redo - need to modulize them and reasses where i have code duplication and api calls without aiohttp

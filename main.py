@@ -73,6 +73,23 @@ async def setprefix(ctx, *, newprefix: str):
     with open("prefixes.json", "w") as f:
         json.dump(prefixes, f, indent=4)
 
+# word filter
+with open("cogs/jsonfiles/badwords.json", "r") as f:
+    bad_words = json.load(f)
+
+@client.event
+async def on_message(message):
+    if message.author == client.user:
+        return
+
+    content_lower = message.content.lower()
+    for bad_word in bad_words:
+        if bad_word in content_lower:
+            await message.delete()
+            await message.channel.send(f"{message.author.mention}, please watch your language!")
+
+    await client.process_commands(message)
+
 # Event: Respond to a command
 # ctx : Taking the inputs from discord(ctx = context)
 

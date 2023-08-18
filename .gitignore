@@ -163,3 +163,4 @@ cython_debug/
 database.db
 apikeys.py
 *.code-workspace
+badwords.json

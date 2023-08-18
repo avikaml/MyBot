@@ -16,24 +16,20 @@ Current Features:
 9. SQL database to store information - mostly lf related stuff as of now
 10. !tweet command that embeds tweets, is currently broken due to twitter shenanigans, instead !vx exists
 11. lastfm commands, currently there exist: lfset, lfchange(temporary, should be part of lfset), !lf np, !lfrecent, !lftoptracks - time period, !lfartist(broken atm!), !lftopalbums, !lftopartists
+12. Many fun commands to display gifs and images
 
 
 Planned Features:
-1. Embeds for gifs, etc
-2. Block certain words - a la delete the forbidden message and post a warning to that user 
-3. LastFM integration - !lfartist - need to fix, !lfchart - if provided by the API, and need to fix up code to be more modular, !lftrack to get track info
-4. Spotify integration? 
-5. Starboard integration
-6. Tests
-7. Lots of fun commands that display certain pictures/gifs and more
-8. level system
-9. Error handling/Custom error messages?
-10. Birthday Messages
-11. Slash commands
-12. !userinfo command
-13. add logger to all the cogs so they log
-14. !tiktok command for tiktok embeds with vx
-15. aiohttp
+1. Block certain words - a la delete the forbidden message and post a warning to that user 
+2. LastFM integration - !lfartist - need to fix, !lfchart - if provided by the API, and need to fix up code to be more modular, !lftrack to get track info
+3. Spotify integration? 
+4. Starboard integration
+5. Tests
+6. level system
+7. Error handling/Custom error messages?
+8. Slash commands
+9. !userinfo command
+10. aiohttp usage throught the whole project
 
 Next features to work on: 7, 8, 1, 2 (Not necessarily in that order)
 

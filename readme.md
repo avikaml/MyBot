@@ -20,7 +20,6 @@ Current Features:
 
 
 Planned Features:
-1. Block certain words - a la delete the forbidden message and post a warning to that user 
 2. LastFM integration - !lfartist - need to fix, !lfchart - if provided by the API, and need to fix up code to be more modular, !lftrack to get track info
 3. Spotify integration? 
 4. Starboard integration
@@ -32,7 +31,7 @@ Planned Features:
 10. aiohttp usage throught the whole project
 11. !rep system
 
-Next features to work on: Level system, Starboard, Block certain words, Rep
+Next features to work on: Level system, Starboard, rep system
 
 Additional notes for myself:
 - LastFM commands could do with a redo - need to modulize them and reasses where i have code duplication and api calls without aiohttp

@@ -56,7 +56,7 @@ class Pagination(View):
     
     async def on_timeout(self):
         try:
-            await self.message.delete() 
+            await self.message.delete() #error...
         except discord.NotFound: 
             pass
 

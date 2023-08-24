@@ -12,6 +12,9 @@ import time
 import asyncio
 from modules.util import Pagination
 import aiohttp
+from bs4 import BeautifulSoup
+
+''' Need to rework everything with aiohttp '''
 
 logger = SingletonLogger.get_logger()
 
@@ -203,10 +206,59 @@ class LastFM(commands.Cog):
             await ctx.send(f"Error: {e}")
             logger.error(f"Error: {e}")
 
+
+    @commands.command(aliases=['lfartist2'])
+    async def lfar2(self, ctx, artist=None, username=None, limit=10):
+        '''!lfartist using scraping '''
+        logger.info(f"User: {ctx.author} (ID: {ctx.author.id}) used the lf artist `2` command in {ctx.guild.name} (ID: {ctx.guild.id})")
+        if(username is None): # 208 - 213 should be made into a function that is called becuase it is used in multiple commands
+            if(not await has_lastfm_username(ctx.author.id)):
+                await ctx.send("You don't have a LastFM username set.")
+                return
+        if(artist is None):
+            await ctx.send("Please specify an artist.")
+            return
+        username = await get_lastfm_username(ctx.author.id)
+        url = f"https://www.last.fm/user/{username}/library/music/{artist}"
+        #image = self.get_image(f"https://www.last.fm/music/{artist}")
+        try:
+            async with aiohttp.ClientSession() as session:
+                async with session.get(url) as response:
+                    if response.status == 200:
+                        content = await response.text()
+                        soup = BeautifulSoup(content, "html.parser")
+
+                        # Extract top 10 tracks
+                        track_elements = soup.find_all("td", class_="chartlist-name")
+                        top_tracks = [element.find("a").get_text().strip() for element in track_elements][:10]
+
+                        # Extract top 10 albums
+                        album_elements = soup.find_all("td", class_="chartlist-name--release")
+                        top_albums = [element.find("a").get_text().strip() for element in album_elements][:10]
+
+                        embed = discord.Embed(
+                            title=f"{username}'s Library for {artist}",
+                            color=discord.Color.default()
+                        )
+
+                        embed.add_field(name="Top 10 Albums", value="\n".join(top_albums), inline=False)
+                        embed.add_field(name="Top 10 Tracks", value="\n".join(top_tracks), inline=False)
+
+                        await ctx.send(embed=embed)
+                    else:
+                        await ctx.send("Error fetching library data.")
+                                    
+        except Exception as e:
+            await ctx.send(f"Error: {e}")
+            logger.error(f"Error: {e}")
+
+
     @commands.command(aliases=['lf artist', 'lfartistinfo'])
     async def lfartist(self, ctx, artist=None, username=None, limit=10):
         ''' Get the user's top 10 albums and top 10 songs of a specific artist
             THIS COMMAND IS BROKEN - I will fix it later if possible!
+            Surely - this uses scraping...
+            could also use scraping to get the image of the top album to add to the embed...
            '''
         logger.info(f"User: {ctx.author} (ID: {ctx.author.id}) used the lf artist command in {ctx.guild.name} (ID: {ctx.guild.id})")
         if(username is None): # 208 - 213 should be made into a function that is called becuase it is used in multiple commands
@@ -232,6 +284,18 @@ class LastFM(commands.Cog):
             sorted_tracks = sorted(user_track_playcount.items(), key=lambda item: item[1], reverse=True)[:limit]
             tracks_text = "\n".join([f"`{i+1}.` {track} - {playcount} plays" for i, (track, playcount) in enumerate(sorted_tracks)])
 
+            
+            ## TEST::: ##
+            url = f"http://ws.audioscrobbler.com/2.0/?method=artist.getinfo&artist={artist}&api_key={self.api_key}&format=json"
+
+            response = requests.get(url)
+            data = response.json()
+            artist_info = data["artist"]
+            mbid = artist_info["mbid"]
+            print(mbid)
+            print(artist_info)
+            ## END OF TEST ##
+
             embed = discord.Embed(
                 title=f"{username}'s top tracks and albums of {artist}",
                 url=user_url,
@@ -256,6 +320,7 @@ class LastFM(commands.Cog):
         username = await get_lastfm_username(ctx.author.id)
         try:
             url = f"http://ws.audioscrobbler.com/2.0/?method=user.gettopalbums&user={username}&api_key={self.api_key}&format=json"
+
             tracks = await get_top_tracks(time, url, 'topalbums')
             user_profile_url = f"https://www.last.fm/user/{username}"
             if time not in ('all', 'week', 'month', 'year', 'Year', 'Month', 'Week', 'All'):
@@ -431,6 +496,21 @@ class LastFM(commands.Cog):
                     return int(data['track']['userplaycount'])
                 else:
                     return 0
+
+    async def get_image(self, artist_url):
+        ''' Helper function for getting the artist image url from the artist page '''
+        async with aiohttp.ClientSession() as session:
+            async with session.get(artist_url) as response:
+                page_content = await response.text()
+
+        soup = BeautifulSoup(page_content, 'html.parser')
+        og_image_meta = soup.find('meta', property='og:image')
+
+        if og_image_meta and 'content' in og_image_meta.attrs:
+            image_url = og_image_meta['content']
+            return image_url
+
+        return None
 
 async def get_top_tracks_list_batch(tracks):
     track_list = []

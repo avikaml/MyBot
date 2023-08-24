@@ -31,7 +31,7 @@ Planned Features:
 10. aiohttp usage throught the whole project
 11. !rep system
 
-Next features to work on: Level system, Starboard, rep system
+Next features to work on: Level system, Starboard, rep system, fix up lastfm stuff
 
 Additional notes for myself:
 - LastFM commands could do with a redo - need to modulize them and reasses where i have code duplication and api calls without aiohttp

@@ -102,7 +102,7 @@ async def hello(ctx):
 async def on_member_join(member):
     channel = client.get_channel(1136000176016871596)
     await channel.send(f'{member} has joined the server!')
-
+    
 @client.event
 async def on_member_remove(member):
     channel = client.get_channel(1136000176016871596)

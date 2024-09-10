@@ -1,4 +1,4 @@
-Sept. 2024: This is a project I made in summer of 2023 after my first year of SE studies. It no longer works due to several reasons but i plan on fixing it in the future
+Sept. 2024: This is a project I made in summer of 2023 after my first year of SE studies. It no longer works due to several reasons but i plan on fixing it in the future. The biggest part of this bot is the LastFM integration - check the relevant Cog to see :)
 
 The following is from august 2023:
 

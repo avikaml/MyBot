@@ -1,3 +1,7 @@
+Sept. 2024: This is a project I made in summer of 2023 after my first year of SE studies. It no longer works due to several reasons but i plan on fixing it in the future
+
+The following is from august 2023:
+
 This is a bot that I'm making for fun that works on discord servers!
 
 At the moment, the deafult bot command prefix is '!'
@@ -35,8 +39,3 @@ Next features to work on: Level system, Starboard, rep system, fix up lastfm stu
 
 Additional notes for myself:
 - LastFM commands could do with a redo - need to modulize them and reasses where i have code duplication and api calls without aiohttp
-
-
-\\ NOTE TO SELF: Before making the repo public, must delete the history of main.py and apikeys.py, possibly Twitter.py(that I deleted and will reinstate, not sure if I actually did commit it) and Weather.py . Good practice for github ^-^
-
-\\ \\ UPDATE: I could possibly just reset the bot token, twitter tokens  and weather token and that will be enough instead of going through github deletion.
